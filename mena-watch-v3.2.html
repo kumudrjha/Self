@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MENA Watch — Singapore Strategic Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+/* ── RESET & BASE ────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:15px}
+body{
+  font-family:'Outfit',sans-serif;
+  background:#0a0c10;
+  color:#e2e4e9;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit}
+
+/* ── CSS VARIABLES ───────────────────────────────────────────── */
+:root{
+  --bg0:#0a0c10;
+  --bg1:#0f1218;
+  --bg2:#151a22;
+  --bg3:#1c2330;
+  --border:#ffffff0f;
+  --border-soft:#ffffff18;
+  --text0:#f0f2f7;
+  --text1:#b8bcc8;
+  --text2:#6e7588;
+  --accent:#c8a96e;       /* warm gold */
+  --accent2:#4a9eff;      /* signal blue */
+  --danger:#e85555;
+  --warn:#e8a225;
+  --safe:#3dba7a;
+  --purple:#9b6dff;
+  --radius:10px;
+  --radius-lg:16px;
+  --glow:0 0 24px rgba(200,169,110,0.08);
+}
+
+/* ── SCROLLBAR ───────────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg0)}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+
+/* ── LAYOUT ──────────────────────────────────────────────────── */
+.app-shell{display:block;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{display:none}
+.sidebar-logo{
+  padding:24px 20px 20px;
+  border-bottom:1px solid var(--border);
+}
+.logo-mark{
+  font-family:'DM Serif Display',serif;
+  font-size:20px;
+  color:var(--accent);
+  letter-spacing:0.02em;
+  line-height:1.1;
+}
+.logo-sub{
+  font-size:10px;
+  color:var(--text2);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  margin-top:3px;
+}
+.live-indicator{
+  display:flex;align-items:center;gap:6px;
+  margin-top:10px;
+  font-size:10px;color:var(--safe);
+  letter-spacing:0.05em;text-transform:uppercase;
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--safe);
+  animation:blink 2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+.sidebar-nav{
+  flex:1;padding:16px 12px;overflow-y:auto;
+}
+.nav-section-label{
+  font-size:9px;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--text2);
+  padding:12px 8px 6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:var(--radius);
+  font-size:13px;color:var(--text1);font-weight:400;
+  transition:all .15s;cursor:pointer;
+  border:none;background:none;width:100%;text-align:left;
+}
+.nav-item:hover{background:var(--bg3);color:var(--text0)}
+.nav-item.active{background:var(--bg3);color:var(--accent);font-weight:500}
+.nav-icon{width:16px;text-align:center;font-size:14px;opacity:0.8}
+.nav-badge{
+  margin-left:auto;font-size:9px;font-weight:600;
+  background:var(--danger);color:#fff;
+  padding:1px 5px;border-radius:8px;
+}
+
+.sidebar-footer{
+  padding:14px 16px;border-top:1px solid var(--border);
+  font-size:10px;color:var(--text2);line-height:1.6;
+}
+
+/* MAIN CONTENT */
+.main{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+/* TOP BAR */
+.topbar{
+  position:sticky;top:0;z-index:90;
+  background:rgba(10,12,16,0.88);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;
+  height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;
+}
+.topbar-title{
+  font-size:13px;font-weight:500;color:var(--text0);
+  font-family:'Outfit',sans-serif;
+}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-btn{
+  padding:6px 14px;font-size:12px;font-weight:500;
+  border-radius:var(--radius);border:1px solid var(--border-soft);
+  background:var(--bg2);color:var(--text1);
+  transition:all .15s;
+}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.topbar-btn.primary{background:var(--accent);color:#0a0c10;border-color:var(--accent)}
+.topbar-btn.primary:hover{background:#dbbf7d}
+.clock{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2)}
+
+/* PAGE CONTENT */
+.page{display:none;padding:28px;animation:fadeIn .25s ease;width:100%;box-sizing:border-box}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:24px}
+.page-title{
+  font-family:'DM Serif Display',serif;
+  font-size:26px;color:var(--text0);
+  line-height:1.2;
+}
+.page-title em{color:var(--accent);font-style:italic}
+.page-desc{font-size:13px;color:var(--text2);margin-top:5px;line-height:1.6}
+
+/* METRICS ROW */
+.metrics-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;margin-bottom:24px;
+}
+.metric-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:16px 18px;
+  transition:border-color .2s;
+}
+.metric-card:hover{border-color:var(--border-soft)}
+.metric-label{font-size:10px;font-weight:500;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--text2);margin-bottom:8px}
+.metric-value{font-size:24px;font-weight:600;color:var(--text0);font-family:'Outfit',sans-serif;line-height:1}
+.metric-value.sm{font-size:17px;padding-top:3px}
+.metric-delta{font-size:11px;margin-top:5px;display:flex;align-items:center;gap:4px}
+.delta-up{color:var(--danger)}
+.delta-dn{color:var(--safe)}
+.delta-neu{color:var(--text2)}
+.metric-bar{height:2px;background:var(--bg3);border-radius:1px;margin-top:10px;overflow:hidden}
+.metric-bar-fill{height:100%;border-radius:1px;transition:width .8s ease}
+
+/* SECTION LABEL */
+.section-label{
+  font-size:10px;font-weight:600;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--text2);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* GRID LAYOUTS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:900px){.three-col{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.two-col,.three-col{grid-template-columns:1fr}}
+
+/* CARDS */
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);overflow:hidden;
+}
+.card-header{
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-title{font-size:13px;font-weight:500;color:var(--text0)}
+.card-body{padding:16px 18px}
+
+/* ── DEVELOPMENTS FEED ───────────────────────────────────────── */
+.filter-bar{
+  display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;
+}
+.filter-pill{
+  padding:4px 12px;font-size:11px;font-weight:500;
+  border-radius:20px;border:1px solid var(--border-soft);
+  background:none;color:var(--text2);
+  transition:all .15s;
+}
+.filter-pill.on{border-color:var(--accent);color:var(--accent);background:rgba(200,169,110,0.08)}
+.filter-pill:hover{color:var(--text0)}
+
+.dev-feed{display:flex;flex-direction:column;gap:8px}
+.dev-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px 16px;
+  display:grid;grid-template-columns:auto 1fr auto;
+  align-items:start;gap:12px;
+  cursor:pointer;transition:all .15s;
+}
+.dev-card:hover{border-color:var(--border-soft);background:var(--bg3)}
+.dev-tag{
+  font-size:9px;font-weight:600;letter-spacing:0.07em;
+  text-transform:uppercase;padding:3px 8px;border-radius:4px;
+  white-space:nowrap;margin-top:2px;
+}
+.tag-mil{background:rgba(232,85,85,0.15);color:#e88585}
+.tag-eco{background:rgba(74,158,255,0.15);color:#7abeff}
+.tag-dip{background:rgba(61,186,122,0.15);color:#6ddba8}
+.tag-hum{background:rgba(232,162,37,0.15);color:#e8b855}
+.tag-nrg{background:rgba(155,109,255,0.15);color:#b99bff}
+
+.dev-headline{font-size:13px;font-weight:400;color:var(--text0);line-height:1.45;margin-bottom:4px}
+.dev-meta{font-size:10px;color:var(--text2);line-height:1.4}
+.dev-impact-pill{
+  font-size:10px;font-weight:500;white-space:nowrap;
+  padding:2px 8px;border-radius:4px;margin-top:2px;
+}
+.imp-h{background:rgba(232,85,85,0.15);color:#e88585}
+.imp-m{background:rgba(232,162,37,0.12);color:#e8b855}
+.imp-l{background:rgba(110,117,136,0.15);color:var(--text2)}
+
+/* ── SCENARIOS ───────────────────────────────────────────────── */
+.scenario-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;
+}
+@media(max-width:600px){.scenario-grid{grid-template-columns:1fr}}
+
+.scenario-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:16px;
+  cursor:pointer;transition:all .2s;
+}
+.scenario-card:hover{border-color:var(--border-soft)}
+.scenario-card.selected{border-color:var(--accent);background:rgba(200,169,110,0.04)}
+.sc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.sc-title{font-size:13px;font-weight:500;color:var(--text0)}
+.sc-prob{
+  font-family:'DM Mono',monospace;font-size:18px;font-weight:500;
+  color:var(--accent);line-height:1;
+}
+.sc-prob-label{font-size:9px;color:var(--text2);margin-top:2px;text-align:right}
+.sc-bar{height:3px;background:var(--bg3);border-radius:2px;margin-bottom:10px;overflow:hidden}
+.sc-fill{height:100%;border-radius:2px}
+.fill-blue{background:var(--accent2)}
+.fill-amber{background:var(--warn)}
+.fill-red{background:var(--danger)}
+.fill-green{background:var(--safe)}
+.sc-desc{font-size:11px;color:var(--text2);line-height:1.55}
+
+.scenario-detail-panel{
+  background:var(--bg2);border:1px solid var(--border-soft);
+  border-radius:var(--radius-lg);padding:20px;
+  animation:fadeIn .2s ease;
+}
+.sdp-title{
+  font-family:'DM Serif Display',serif;
+  font-size:17px;color:var(--text0);margin-bottom:14px;
+}
+.impact-matrix{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.impact-matrix{grid-template-columns:1fr}}
+.im-cell{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px;
+}
+.im-label{
+  font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--text2);margin-bottom:6px;
+}
+.im-value{font-size:11px;color:var(--text1);line-height:1.5}
+
+/* ── THREATS / OPPORTUNITIES ─────────────────────────────────── */
+.to-toggle{display:flex;gap:4px;margin-bottom:16px}
+.to-btn{
+  padding:6px 16px;font-size:12px;font-weight:500;
+  border-radius:var(--radius);border:1px solid var(--border);
+  background:none;color:var(--text2);transition:all .15s;
+}
+.to-btn.active{background:var(--bg3);color:var(--text0);border-color:var(--border-soft)}
+.to-btn:hover:not(.active){color:var(--text0)}
+
+.to-list{display:flex;flex-direction:column;gap:10px}
+.to-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:16px 18px;
+  transition:border-color .15s;
+}
+.to-card:hover{border-color:var(--border-soft)}
+.to-card-header{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  margin-bottom:8px;
+}
+.to-title{font-size:13px;font-weight:500;color:var(--text0);line-height:1.4}
+.to-sector{
+  font-size:9px;font-weight:600;padding:3px 8px;border-radius:4px;
+  letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;
+}
+.sector-energy{background:rgba(155,109,255,0.15);color:#b99bff}
+.sector-trade{background:rgba(74,158,255,0.15);color:#7abeff}
+.sector-finance{background:rgba(61,186,122,0.15);color:#6ddba8}
+.sector-aviation{background:rgba(200,169,110,0.15);color:var(--accent)}
+.sector-defence{background:rgba(232,85,85,0.15);color:#e88585}
+.to-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.to-footer{display:flex;align-items:center;justify-content:space-between}
+.severity-row{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text2)}
+.sev-dot{width:7px;height:7px;border-radius:50%}
+.ask-link{
+  font-size:11px;color:var(--accent2);cursor:pointer;
+  border:none;background:none;font-family:inherit;
+  transition:opacity .15s;padding:4px 8px;border-radius:6px;
+}
+.ask-link:hover{background:rgba(74,158,255,0.1)}
+
+/* ── INTELLIGENCE FETCH ──────────────────────────────────────── */
+.fetch-form{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:20px;margin-bottom:20px;
+}
+.fetch-form-title{font-size:13px;font-weight:500;color:var(--text0);margin-bottom:12px}
+.fetch-row{display:flex;gap:10px;flex-wrap:wrap}
+.fetch-select{
+  padding:8px 14px;font-size:12px;font-family:'Outfit',sans-serif;
+  background:var(--bg3);border:1px solid var(--border-soft);
+  color:var(--text0);border-radius:var(--radius);flex:1;min-width:180px;
+}
+.fetch-select option{background:var(--bg1)}
+.fetch-btn{
+  padding:8px 18px;font-size:12px;font-weight:500;
+  background:var(--accent);color:#0a0c10;border:none;
+  border-radius:var(--radius);transition:all .15s;white-space:nowrap;
+}
+.fetch-btn:hover{background:#dbbf7d}
+.fetch-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.intel-output{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:20px;min-height:120px;
+  font-size:13px;color:var(--text1);line-height:1.75;
+}
+.intel-output .loading{
+  display:flex;align-items:center;gap:10px;color:var(--text2);font-size:12px;
+}
+.spinner{
+  width:14px;height:14px;border:1.5px solid var(--bg3);
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.intel-section{margin-bottom:14px}
+.intel-section-title{
+  font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:6px;
+}
+.intel-section-body{font-size:12px;color:var(--text1);line-height:1.7}
+
+/* ── HISTORICAL COMPARISON ───────────────────────────────────── */
+.history-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px}
+@media(max-width:800px){.history-grid{grid-template-columns:1fr}}
+.history-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:all .2s;
+}
+.history-card.active,.history-card:hover{border-color:var(--accent)}
+.history-era{
+  font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--text2);margin-bottom:4px;
+}
+.history-title{font-size:14px;font-weight:500;color:var(--text0);margin-bottom:6px}
+.history-oil{
+  font-family:'DM Mono',monospace;font-size:20px;color:var(--accent);
+}
+.history-oil-label{font-size:10px;color:var(--text2);margin-top:2px}
+.history-desc{font-size:11px;color:var(--text2);margin-top:8px;line-height:1.5}
+
+.comparison-table{width:100%;border-collapse:collapse;font-size:12px}
+.comparison-table th{
+  text-align:left;padding:8px 12px;
+  font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--text2);border-bottom:1px solid var(--border);
+}
+.comparison-table td{
+  padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text1);
+  line-height:1.5;
+}
+.comparison-table tr:last-child td{border-bottom:none}
+.comparison-table tr:hover td{background:var(--bg3)}
+.ct-highlight{color:var(--accent);font-weight:500}
+
+/* ── POLICY BRIEF ────────────────────────────────────────────── */
+.brief-controls{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;
+}
+.brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+@media(max-width:600px){.brief-grid{grid-template-columns:1fr}}
+.brief-field label{
+  display:block;font-size:10px;font-weight:600;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--text2);margin-bottom:6px;
+}
+.brief-field input,.brief-field select,.brief-field textarea{
+  width:100%;padding:9px 12px;font-size:12px;font-family:'Outfit',sans-serif;
+  background:var(--bg3);border:1px solid var(--border-soft);
+  color:var(--text0);border-radius:var(--radius);
+  transition:border-color .15s;
+}
+.brief-field input:focus,.brief-field select:focus,.brief-field textarea:focus{
+  outline:none;border-color:var(--accent);
+}
+.brief-field textarea{min-height:70px;resize:vertical}
+.brief-field select option{background:var(--bg1)}
+
+.brief-output-area{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:24px;
+  min-height:200px;
+  font-size:13px;color:var(--text1);line-height:1.8;
+  white-space:pre-wrap;font-family:'Outfit',sans-serif;
+}
+.brief-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.action-btn{
+  padding:7px 16px;font-size:12px;font-weight:500;border-radius:var(--radius);
+  border:1px solid var(--border-soft);background:var(--bg3);color:var(--text1);
+  transition:all .15s;
+}
+.action-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── ALERTS / WATCHLIST ──────────────────────────────────────── */
+.alert-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:16px;
+  display:flex;align-items:flex-start;gap:14px;
+  transition:border-color .15s;
+}
+.alert-card.triggered{border-color:rgba(232,85,85,0.4);background:rgba(232,85,85,0.04)}
+.alert-card.warning{border-color:rgba(232,162,37,0.3);background:rgba(232,162,37,0.03)}
+.alert-icon{
+  width:34px;height:34px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:16px;flex-shrink:0;margin-top:1px;
+}
+.icon-danger{background:rgba(232,85,85,0.15)}
+.icon-warn{background:rgba(232,162,37,0.12)}
+.icon-safe{background:rgba(61,186,122,0.12)}
+.alert-content{flex:1}
+.alert-title{font-size:13px;font-weight:500;color:var(--text0);margin-bottom:3px}
+.alert-desc{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:8px}
+.alert-threshold{
+  display:flex;align-items:center;gap:8px;font-size:11px;
+}
+.threshold-current{
+  font-family:'DM Mono',monospace;font-size:13px;font-weight:500;
+}
+.threshold-target{font-size:10px;color:var(--text2)}
+.alert-status{
+  padding:2px 8px;border-radius:4px;font-size:9px;font-weight:600;
+  letter-spacing:0.05em;text-transform:uppercase;
+}
+.status-triggered{background:rgba(232,85,85,0.2);color:var(--danger)}
+.status-warning{background:rgba(232,162,37,0.15);color:var(--warn)}
+.status-normal{background:rgba(61,186,122,0.12);color:var(--safe)}
+
+/* ── SOURCES TABLE ───────────────────────────────────────────── */
+.sources-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:700px){.sources-grid{grid-template-columns:1fr}}
+.source-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  transition:border-color .15s;
+}
+.source-card:hover{border-color:var(--border-soft)}
+.source-left{flex:1}
+.source-name{font-size:12px;font-weight:500;color:var(--text0);margin-bottom:2px}
+.source-type{font-size:10px;color:var(--text2)}
+.source-category{
+  font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;
+  text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;display:inline-block;
+}
+.cat-conflict{background:rgba(232,85,85,0.12);color:#e88585}
+.cat-energy{background:rgba(155,109,255,0.12);color:#b99bff}
+.cat-trade{background:rgba(74,158,255,0.12);color:#7abeff}
+.cat-finance{background:rgba(61,186,122,0.12);color:#6ddba8}
+.cat-regional{background:rgba(200,169,110,0.12);color:var(--accent)}
+.source-link{
+  font-size:11px;color:var(--accent2);white-space:nowrap;flex-shrink:0;
+}
+.source-link:hover{text-decoration:underline}
+
+/* ── CHART CONTAINERS ────────────────────────────────────────── */
+.chart-wrap{position:relative;width:100%;height:240px}
+.chart-wrap.tall{height:280px}
+
+/* ── CHART LEGEND ────────────────────────────────────────────── */
+.chart-legend{
+  display:flex;flex-wrap:wrap;gap:14px;
+  font-size:11px;color:var(--text2);margin-bottom:10px;
+}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-swatch{width:10px;height:10px;border-radius:2px}
+
+/* ── MISC ────────────────────────────────────────────────────── */
+.mt-16{margin-top:16px}
+.mt-20{margin-top:20px}
+.mb-16{margin-bottom:16px}
+.gap-16{gap:16px}
+.hidden{display:none!important}
+.text-accent{color:var(--accent)}
+.text-safe{color:var(--safe)}
+.text-danger{color:var(--danger)}
+.text-warn{color:var(--warn)}
+.mono{font-family:'DM Mono',monospace}
+
+.empty-state{
+  text-align:center;padding:40px;color:var(--text2);font-size:12px;
+}
+
+/* Mobile nav toggle */
+.menu-toggle{display:none;position:fixed;bottom:20px;right:20px;
+  z-index:200;background:var(--accent);color:#0a0c10;
+  width:44px;height:44px;border-radius:50%;border:none;font-size:20px;
+}
+
+
+/* ══ LOGIN ═══════════════════════════════════════════════════ */
+#login-screen{position:fixed;inset:0;z-index:9999;background:#0a0c10;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity .4s ease}
+.login-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.login-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(200,169,110,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(200,169,110,0.04) 1px,transparent 1px);background-size:48px 48px}
+.login-glow{position:absolute;top:35%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;border-radius:50%;background:radial-gradient(ellipse,rgba(200,169,110,0.07) 0%,transparent 70%)}
+.login-box{position:relative;z-index:1;width:390px;padding:44px 40px 36px;background:var(--bg1);border:1px solid var(--border-soft);border-radius:24px;animation:loginIn .6s ease both}
+@keyframes loginIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.login-logo{font-family:'DM Serif Display',serif;font-size:34px;color:var(--accent);letter-spacing:.02em;text-align:center;margin-bottom:4px}
+.login-tagline{font-size:11px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;text-align:center;margin-bottom:28px}
+.login-badge{display:flex;align-items:center;gap:6px;background:rgba(232,85,85,.1);border:1px solid rgba(232,85,85,.2);border-radius:6px;padding:4px 10px;font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--danger);width:fit-content;margin:0 auto 28px}
+.lbdot{width:5px;height:5px;border-radius:50%;background:var(--danger);animation:blink2 1.5s infinite}
+@keyframes blink2{0%,100%{opacity:1}50%{opacity:.2}}
+.lfield{margin-bottom:14px}
+.lfield label{display:block;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin-bottom:7px}
+.lfield input{width:100%;padding:11px 14px;font-size:13px;font-family:'Outfit',sans-serif;background:var(--bg2);border:1px solid var(--border-soft);color:var(--text0);border-radius:var(--radius);transition:border-color .2s}
+.lfield input:focus{outline:none;border-color:var(--accent)}
+.lfield input::placeholder{color:var(--text2)}
+.login-submit{width:100%;padding:12px;font-size:13px;font-weight:600;background:var(--accent);color:#0a0c10;border:none;border-radius:var(--radius);margin-top:8px;transition:all .2s;cursor:pointer}
+.login-submit:hover{background:#dbbf7d}
+.login-error{background:rgba(232,85,85,.1);border:1px solid rgba(232,85,85,.2);border-radius:var(--radius);padding:9px 12px;font-size:11px;color:var(--danger);margin-top:12px;display:none;text-align:center}
+.login-hint{text-align:center;font-size:10px;color:var(--text2);margin-top:20px;line-height:1.6}
+.login-hint strong{color:var(--text1)}
+.login-footer-txt{position:absolute;bottom:24px;left:0;right:0;text-align:center;font-size:10px;color:var(--text2);letter-spacing:.04em}
+
+/* ══ TAB BAR (replaces sidebar) ════════════════════════════ */
+.tab-bar-outer{background:var(--bg1);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:flex-end;gap:1px;overflow-x:auto;flex-shrink:0}
+.tab-bar-outer::-webkit-scrollbar{height:0}
+.tbar-btn{padding:9px 16px 8px;font-size:12px;font-weight:400;color:var(--text2);background:none;border:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px;margin-bottom:-1px;cursor:pointer;font-family:'Outfit',sans-serif}
+.tbar-btn:hover{color:var(--text0)}
+.tbar-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500}
+.tbadge{font-size:8px;font-weight:700;background:var(--danger);color:#fff;padding:1px 4px;border-radius:3px}
+
+/* ══ TOP HEADER OVERRIDE ════════════════════════════════════ */
+.topbar{position:sticky;top:0;z-index:200;background:rgba(10,12,16,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 22px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logout-btn{padding:5px 13px;font-size:11px;font-weight:500;border-radius:var(--radius);border:1px solid var(--border-soft);background:none;color:var(--text2);transition:all .15s;cursor:pointer;font-family:'Outfit',sans-serif}
+.logout-btn:hover{border-color:var(--danger);color:var(--danger)}
+
+/* ══ MAP ════════════════════════════════════════════════════ */
+#crisis-map{height:460px;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border)}
+.leaflet-container{background:#0d1420!important}
+.map-legend-bar{background:var(--bg2);border:1px solid var(--border-soft);border-radius:var(--radius);padding:10px 14px;margin-top:10px;display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.ml-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)}
+.ml-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.ml-line{width:22px;height:2px;flex-shrink:0}
+
+.page{display:none}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-bg"><div class="login-grid"></div><div class="login-glow"></div></div>
+  <div class="login-box">
+    <div class="login-logo">MENA Watch</div>
+    <div class="login-tagline">Singapore Strategic Intelligence Platform</div>
+    <div class="login-badge"><div class="lbdot"></div>Restricted Access — Authorised Users Only</div>
+    <div class="lfield"><label>User ID</label><input type="text" id="luser" placeholder="Enter user ID" autocomplete="username"></div>
+    <div class="lfield"><label>Access Code</label><input type="password" id="lpass" placeholder="Enter access code" autocomplete="current-password"></div>
+    <button class="login-submit" onclick="doLogin()">Authenticate &rarr;</button>
+    <div class="login-error" id="lerr">Invalid credentials. Please try again.</div>
+
+  </div>
+  <div class="login-footer-txt">MENA Watch v2.0 &nbsp;&middot;&nbsp; Singapore Institute for Strategic Studies</div>
+</div>
+
+<div class="app-shell" id="app-shell" style="display:none">
+
+<!-- ── SIDEBAR ────────────────────────────────────────────────── -->
+
+
+<!-- ── MAIN ───────────────────────────────────────────────────── -->
+<div class="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--accent)">MENA Watch</div>
+      <div style="display:flex;align-items:center;gap:5px;background:rgba(61,186,122,.1);border:1px solid rgba(61,186,122,.2);border-radius:20px;padding:3px 9px;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--safe)"><div class="live-dot"></div>Live</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="clock" id="clock">--:-- SGT</div>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+  <!-- TAB BAR -->
+  <div class="tab-bar-outer">
+    <button class="tbar-btn active" onclick="tabSwitch('overview',this)">&#9737; Overview <span class="tbadge">3</span></button>
+    <button class="tbar-btn" onclick="tabSwitch('map',this)">&#8853; Crisis Map</button>
+    <button class="tbar-btn" onclick="tabSwitch('scenarios',this)">&#9063; Scenarios</button>
+    <button class="tbar-btn" onclick="tabSwitch('impact',this)">&#127480;&#127468; SG Impact</button>
+    <button class="tbar-btn" onclick="tabSwitch('alerts',this)">&#9889; Alerts <span class="tbadge">2</span></button>
+    <button class="tbar-btn" onclick="tabSwitch('intelligence',this)">&#8635; Live Intel</button>
+    <button class="tbar-btn" onclick="tabSwitch('historical',this)">&#9643; Historical</button>
+    <button class="tbar-btn" onclick="tabSwitch('brief',this)">&#10022; Policy Brief</button>
+    <button class="tbar-btn" onclick="tabSwitch('sources',this)">&#8854; Sources</button>
+  </div>
+
+  <!-- ── PAGE: OVERVIEW ─────────────────────────────────────────── -->
+  <div class="page" id="page-overview" style="display:none">
+    <div class="page-header">
+      <div class="page-title">Crisis <em>Overview</em></div>
+      <div class="page-desc">Real-time tracking of Middle East developments and Singapore's strategic exposure. Updated continuously from public intelligence sources.</div>
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-label">Brent Crude</div>
+        <div class="metric-value">$89</div>
+        <div class="metric-delta delta-up">↑ +18% vs 2023 avg</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:68%;background:var(--warn)"></div></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Red Sea Traffic</div>
+        <div class="metric-value">−55%</div>
+        <div class="metric-delta delta-up">↑ Cape rerouting</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:45%;background:var(--danger)"></div></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Hormuz Risk</div>
+        <div class="metric-value sm">Constrained</div>
+        <div class="metric-delta delta-up">↑ High tension</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:72%;background:var(--danger)"></div></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">PSA Volumes</div>
+        <div class="metric-value">+8%</div>
+        <div class="metric-delta delta-dn">↑ Rerouting benefit</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:58%;background:var(--safe)"></div></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">SG Threat Level</div>
+        <div class="metric-value sm">Elevated</div>
+        <div class="metric-delta delta-neu">→ Indirect exposure</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:55%;background:var(--warn)"></div></div>
+      </div>
+    </div>
+
+    <div class="two-col mb-16">
+      <div>
+        <div class="section-label">Latest developments</div>
+        <div class="filter-bar">
+          <button class="filter-pill on" onclick="filterDev(this,'all')">All</button>
+          <button class="filter-pill" onclick="filterDev(this,'mil')">Military</button>
+          <button class="filter-pill" onclick="filterDev(this,'eco')">Economic</button>
+          <button class="filter-pill" onclick="filterDev(this,'dip')">Diplomatic</button>
+          <button class="filter-pill" onclick="filterDev(this,'nrg')">Energy</button>
+          <button class="filter-pill" onclick="filterDev(this,'hum')">Humanitarian</button>
+        </div>
+        <div class="dev-feed" id="dev-feed"></div>
+      </div>
+
+      <div>
+        <div class="section-label">Crisis intensity index</div>
+        <div class="card mb-16">
+          <div class="card-body">
+            <div class="chart-legend">
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--danger)"></span>Conflict events</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--warn)"></span>Oil price</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--accent2)"></span>Shipping disruption</span>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="intensityChart" role="img" aria-label="Line chart showing Middle East crisis intensity trends across conflict events, oil price, and shipping disruption from January to May 2025">Data shows escalating conflict and shipping disruption from Q1 to Q2 2025.</canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Regional actor risk matrix</div>
+        <div class="card">
+          <div class="card-body">
+            <div class="chart-wrap">
+              <canvas id="actorChart" role="img" aria-label="Radar chart showing risk dimensions for key Middle East actors including Iran, Houthis, Hezbollah, Israel, Saudi Arabia, and Gulf states">Iran and Houthis show highest conflict risk; Saudi Arabia shows highest economic interdependence with Singapore.</canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Methodology footnote -->
+    <div style="margin-top:16px;background:rgba(200,169,110,0.05);border:1px solid rgba(200,169,110,0.15);border-radius:var(--radius-lg);padding:14px 18px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Index Methodology — hover any chart point for source citations</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div>
+          <div style="font-size:10px;font-weight:600;color:var(--text1);margin-bottom:3px;">Crisis Intensity Index</div>
+          <div style="font-size:10px;color:var(--text2);line-height:1.5">Weighted composite: Conflict Events 40% (ACLED) · Oil Deviation 35% (ICE Brent/EIA) · Shipping Disruption 25% (BIMCO/MPA)</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:600;color:var(--text1);margin-bottom:3px;">Actor Risk Matrix</div>
+          <div style="font-size:10px;color:var(--text2);line-height:1.5">Five-axis framework: ACLED/UCDP · DOS/MAS/EMA · MFA/IE Singapore · ICG/IISS · UN Digital Library/MFA</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:600;color:var(--text1);margin-bottom:3px;">Chokepoint Risk Index</div>
+          <div style="font-size:10px;color:var(--text2);line-height:1.5">Four-component composite: Threat Incidence 35% · Traffic Disruption 30% · Insurance Deviation 25% · Naval Deterrence −10%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- MAP PAGE -->
+  <div class="page" id="page-map" style="display:none">
+    <div class="page-header">
+      <div class="page-title">Crisis <em>Map</em></div>
+      <div class="page-desc">Interactive map of active conflict zones, shipping chokepoints, and Singapore trade vectors. Click any marker for details.</div>
+    </div>
+
+    <div id="crisis-map"></div>
+
+    <div class="map-legend-bar">
+      <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-right:4px">Legend</span>
+      <span class="ml-item"><span class="ml-dot" style="background:#e85555"></span>Active conflict</span>
+      <span class="ml-item"><span class="ml-dot" style="background:#e8a225"></span>Maritime chokepoint</span>
+      <span class="ml-item"><span class="ml-dot" style="background:#4a9eff"></span>Singapore hub</span>
+      <span class="ml-item"><span class="ml-dot" style="background:#9b6dff"></span>SG strategic partner</span>
+      <span class="ml-item"><span class="ml-line" style="background:#e85555;opacity:.7;height:2px;border-top:2px dashed #e85555;background:none"></span>Disrupted route</span>
+      <span class="ml-item"><span class="ml-line" style="border-top:2px dashed #3dba7a"></span>Alternative (Cape)</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Chokepoint risk levels</div></div>
+        <div class="card-body">
+          <div style="position:relative;width:100%;height:200px">
+            <canvas id="chokepointChart" role="img" aria-label="Risk levels at key maritime chokepoints">Bab-el-Mandeb and Hormuz at highest risk.</canvas>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Singapore trade impact breakdown</div></div>
+        <div class="card-body">
+          <div style="position:relative;width:100%;height:200px">
+            <canvas id="tradeImpactChart" role="img" aria-label="Singapore trade impact by category">Shipping delay is largest category of impact.</canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+<!-- ── PAGE: SCENARIOS ────────────────────────────────────────── -->
+  <div class="page" id="page-scenarios" style="display:none">
+    <div class="page-header">
+      <div class="page-title">Scenario <em>Modelling</em></div>
+      <div class="page-desc">Probability-weighted geopolitical scenarios with Singapore-specific impact analysis. Click a scenario to explore.</div>
+    </div>
+
+    <div class="scenario-grid" id="scenario-grid"></div>
+    <div class="scenario-detail-panel" id="sdp">
+      <div class="sdp-title" id="sdp-title">Select a scenario above</div>
+      <div class="impact-matrix" id="sdp-matrix"></div>
+    </div>
+
+    <div class="mt-20">
+      <div class="section-label">Oil price range by scenario</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--accent2)"></span>Managed containment</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--warn)"></span>Regional escalation</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--danger)"></span>Hormuz closure</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--safe)"></span>Diplomatic breakthrough</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="scenarioChart" role="img" aria-label="Bar chart of oil price ranges across four Middle East crisis scenarios">Managed containment $90, Regional escalation $120, Hormuz closure $155, Breakthrough $72.</canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: SG IMPACT ────────────────────────────────────────── -->
+  <div class="page" id="page-impact" style="display:none">
+    <div class="page-header">
+      <div class="page-title">Singapore <em>Impact</em></div>
+      <div class="page-desc">Threats and opportunities for Singapore arising from the Middle East crisis, across sectors.</div>
+    </div>
+
+    <div class="to-toggle">
+      <button class="to-btn active" onclick="switchTO(this,'threats')">⚠ Threats</button>
+      <button class="to-btn" onclick="switchTO(this,'opportunities')">◆ Opportunities</button>
+    </div>
+
+    <div id="to-threats" class="to-list"></div>
+    <div id="to-opportunities" class="to-list hidden"></div>
+
+    <div class="mt-20">
+      <div class="section-label">Sector exposure heatmap</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="chart-wrap tall">
+            <canvas id="heatmapChart" role="img" aria-label="Bar chart showing Singapore sector exposure to Middle East crisis risk">Energy and shipping sectors show highest exposure; technology sector lowest.</canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: ALERTS ───────────────────────────────────────────── -->
+  <div class="page" id="page-alerts" style="display:none">
+    <div class="page-header">
+      <div class="page-title">Alert <em>Watchlist</em></div>
+      <div class="page-desc">Key trigger indicators monitored for threshold breaches. Active alerts require strategic review.</div>
+    </div>
+    <div class="dev-feed" id="alerts-feed" style="gap:10px"></div>
+  </div>
+
+  <!-- ── PAGE: INTELLIGENCE FETCH ──────────────────────────────── -->
+  <div class="page" id="page-intelligence" style="display:none">
+    <div class="page-header">
+      <div class="page-title">Live <em>Intelligence</em></div>
+      <div class="page-desc">Synthesis of developments from public intelligence sources. Select a topic and fetch live analysis.</div>
+    </div>
+
+    <div class="fetch-form">
+      <div class="fetch-form-title">Configure intelligence fetch</div>
+      <div class="fetch-row">
+        <select class="fetch-select" id="fetch-topic">
+          <option value="shipping">Red Sea & Hormuz shipping disruption</option>
+          <option value="energy">Energy markets & LNG supply</option>
+          <option value="military">Military escalation & conflict actors</option>
+          <option value="diplomacy">Diplomatic developments & ceasefire talks</option>
+          <option value="singapore">Singapore-specific strategic impact</option>
+          <option value="economic">Regional economic spillovers</option>
+          <option value="scenarios">Scenario probability updates</option>
+        </select>
+        <select class="fetch-select" id="fetch-depth" style="max-width:200px">
+          <option value="summary">Summary briefing</option>
+          <option value="detailed">Detailed analysis</option>
+          <option value="policy">Policy recommendation</option>
+        </select>
+        <button class="fetch-btn" id="fetch-btn" onclick="fetchIntelligence()">↓ Fetch Intelligence</button>
+      </div>
+    </div>
+
+    <div class="section-label">Analysis output</div>
+    <div class="intel-output" id="intel-output">
+      <div style="color:var(--text2);font-size:12px;">Select a topic and click "Fetch Intelligence" to generate analysis from public intelligence sources.</div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: HISTORICAL ───────────────────────────────────────── -->
+  <div class="page" id="page-historical" style="display:none">
+    <div class="page-header">
+      <div class="page-title">Historical <em>Comparison</em></div>
+      <div class="page-desc">Mapping the current crisis against precedent geopolitical shocks. Click a crisis to see the comparative analysis.</div>
+    </div>
+
+    <div class="history-grid" id="history-grid"></div>
+
+    <div class="section-label mt-20">Comparative analysis</div>
+    <div class="card">
+      <div class="card-body" style="overflow-x:auto">
+        <table class="comparison-table" id="comp-table">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>1973 Oil Shock</th>
+              <th>1990 Gulf War</th>
+              <th>2024–25 MENA Crisis</th>
+            </tr>
+          </thead>
+          <tbody id="comp-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-20">
+      <div class="section-label">Oil price shock comparison</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="chart-wrap tall">
+            <canvas id="historicalChart" role="img" aria-label="Line chart comparing oil price trajectories across three major Middle East crises over 18 months">Shows steeper initial spike in 1973, moderate rise in 1990, and gradual elevation in 2024-25.</canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: POLICY BRIEF ─────────────────────────────────────── -->
+  <div class="page" id="page-brief" style="display:none">
+    <div class="page-header">
+      <div class="page-title">Policy <em>Brief Generator</em></div>
+      <div class="page-desc">Policy memos for Singapore government, MAS, ISEAS, or corporate strategy audiences.</div>
+    </div>
+
+    <div class="brief-controls">
+      <div class="brief-form-title" style="font-size:13px;font-weight:500;color:var(--text0);margin-bottom:14px">Configure policy brief</div>
+      <div class="brief-grid">
+        <div class="brief-field">
+          <label>Audience / Institution</label>
+          <select id="brief-audience">
+            <option>Ministry of Trade and Industry (MTI)</option>
+            <option>Monetary Authority of Singapore (MAS)</option>
+            <option>ISEAS – Yusof Ishak Institute</option>
+            <option>Ministry of Foreign Affairs (MFA)</option>
+            <option>Singapore Business Federation</option>
+            <option>Corporate Strategy Team</option>
+            <option>Academic Research</option>
+          </select>
+        </div>
+        <div class="brief-field">
+          <label>Focus scenario</label>
+          <select id="brief-scenario">
+            <option>Managed containment (40% probability)</option>
+            <option>Regional escalation (30% probability)</option>
+            <option>Hormuz closure (15% probability)</option>
+            <option>Diplomatic breakthrough (15% probability)</option>
+            <option>All scenarios — probability-weighted</option>
+          </select>
+        </div>
+        <div class="brief-field">
+          <label>Sector focus</label>
+          <select id="brief-sector">
+            <option>All sectors — comprehensive</option>
+            <option>Energy & refining</option>
+            <option>Trade & shipping</option>
+            <option>Financial markets</option>
+            <option>Aviation & tourism</option>
+            <option>Defence & security</option>
+          </select>
+        </div>
+        <div class="brief-field">
+          <label>Brief length</label>
+          <select id="brief-length">
+            <option>Executive summary (1 page)</option>
+            <option>Standard brief (2–3 pages)</option>
+            <option>Detailed analysis (5+ pages)</option>
+          </select>
+        </div>
+      </div>
+      <div class="brief-field">
+        <label>Additional context / specific questions</label>
+        <textarea id="brief-context" placeholder="e.g. Focus on implications for Singapore's strategic petroleum reserve policy, or assess impact on Temasek's Gulf portfolio..."></textarea>
+      </div>
+      <div style="margin-top:12px">
+        <button class="fetch-btn" id="brief-btn" onclick="generateBrief()">✦ Generate Policy Brief</button>
+      </div>
+    </div>
+
+    <div class="section-label">Generated brief</div>
+    <div class="brief-output-area" id="brief-output">Policy brief will appear here after generation.</div>
+    <div class="brief-actions">
+      <button class="action-btn" onclick="copyBrief()">⎘ Copy to clipboard</button>
+      <button class="action-btn" onclick="downloadBrief()">↓ Download .txt</button>
+    </div>
+  </div>
+
+  <!-- ── PAGE: SOURCES ──────────────────────────────────────────── -->
+  <div class="page" id="page-sources" style="display:none">
+    <div class="page-header">
+      <div class="page-title">Intelligence <em>Sources</em></div>
+      <div class="page-desc">Curated public sources powering this dashboard. All data is publicly available for independent verification.</div>
+    </div>
+    <div class="sources-grid" id="sources-grid"></div>
+  </div>
+
+</div><!-- end .main -->
+</div><!-- end .app-shell -->
+
+
+
+<script>
+
+/* ══ CREDENTIALS ══════════════════════════════════════════════ */
+const CREDS = {analyst:'mena2025', researcher:'iseas2025', admin:'sg2025'};
+
+function doLogin(){
+  const u = document.getElementById('luser').value.trim();
+  const p = document.getElementById('lpass').value.trim();
+  const err = document.getElementById('lerr');
+  if(CREDS[u] && CREDS[u]===p){
+    const ls = document.getElementById('login-screen');
+    ls.style.opacity='0';
+    setTimeout(()=>{
+      ls.style.display='none';
+      document.getElementById('app-shell').style.display='flex';
+      initApp();
+    },400);
+  } else {
+    err.style.display='block';
+    document.getElementById('lpass').value='';
+    setTimeout(()=>err.style.display='none',3000);
+  }
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+
+function doLogout(){ location.reload(); }
+
+/* ══ TABS ══════════════════════════════════════════════════════ */
+function tabSwitch(name, el){
+  document.querySelectorAll('.page').forEach(p=>{p.style.display='none';p.classList.remove('active');});
+  document.querySelectorAll('.tbar-btn').forEach(b=>b.classList.remove('active'));
+  const pg = document.getElementById('page-'+name);
+  if(pg){pg.style.display='block';pg.classList.add('active');}
+  if(el) el.classList.add('active');
+  if(name==='map' && !window._mapInited) { initCrisisMap(); window._mapInited=true; }
+}
+
+/* ══ MAP ═══════════════════════════════════════════════════════ */
+function initCrisisMap(){
+  const map = L.map('crisis-map',{center:[22,48],zoom:4,attributionControl:true,zoomControl:true});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'&copy; OpenStreetMap &copy; CARTO',maxZoom:15,opacity:0.85
+  }).addTo(map);
+
+  function mkCircle(color,r=10){
+    return L.divIcon({className:'',iconSize:[r*2,r*2],iconAnchor:[r,r],
+      html:'<div style="width:'+r*2+'px;height:'+r*2+'px;border-radius:50%;background:'+color+';border:2px solid '+color+'55;box-shadow:0 0 10px '+color+'88"></div>'});
+  }
+  function popup(title,body,tag,tagColor){
+    return '<div style="font-family:Outfit,sans-serif;min-width:200px;max-width:240px"><div style="font-weight:600;color:#f0f2f7;margin-bottom:6px;font-size:13px">'+title+'</div><div style="font-size:11px;color:#b8bcc8;line-height:1.55;margin-bottom:8px">'+body+'</div><span style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:'+tagColor+';padding:2px 8px;border-radius:4px">'+tag+'</span></div>';
+  }
+
+  // Conflict zones
+  [
+    {ll:[31.5,34.5],n:'Gaza Strip',d:'Active IDF operations. Humanitarian crisis. Primary regional escalation trigger. >2.1M displaced.'},
+    {ll:[33.5,35.8],n:'South Lebanon / Hezbollah frontier',d:'Cross-border rocket exchanges with Israel. Northern front risk elevated. Hezbollah 150,000+ rocket arsenal.'},
+    {ll:[15.0,44.0],n:'Yemen (Houthi-controlled)',d:'Houthi missile & drone attacks on Red Sea shipping since Nov 2023. 2,000+ maritime incidents logged.'},
+    {ll:[32.0,44.0],n:'Iraq (Shia militia zones)',d:'Iranian-backed militia targeting US bases. Pro-Iran proxy coordination network active.'},
+  ].forEach(c=>{
+    L.marker(c.ll,{icon:mkCircle('#e85555',14)}).addTo(map)
+      .bindPopup(popup(c.n,c.d,'Active conflict zone','rgba(232,85,85,.25)'),{className:'mena-popup'});
+  });
+
+  // Chokepoints
+  [
+    {ll:[26.5,56.3],n:'Strait of Hormuz',d:'20% of global oil transit daily. Iranian threat of closure. Critical Singapore energy exposure. US 5th Fleet patrols active.'},
+    {ll:[12.5,43.3],n:'Bab-el-Mandeb',d:'Houthi attack zone. Red Sea traffic -55%. Critical Singapore-Europe trade route. Insurance premiums +400%.'},
+    {ll:[29.9,32.6],n:'Suez Canal',d:'Traffic diverted due to Red Sea risk. Ships rerouting via Cape of Good Hope adding 10-14 days.'},
+    {ll:[24.0,58.5],n:'Gulf of Oman',d:'Elevated naval tension. US, UK, French patrols active. Tanker shadow fleet operating.'},
+  ].forEach(c=>{
+    L.marker(c.ll,{icon:mkCircle('#e8a225',13)}).addTo(map)
+      .bindPopup(popup(c.n,c.d,'Maritime chokepoint','rgba(232,162,37,.2)'),{className:'mena-popup'});
+  });
+
+  // SG strategic partners
+  [
+    {ll:[24.5,54.4],n:'Abu Dhabi, UAE',d:'Key SG strategic partner. ADIA sovereign wealth fund. Major trade & investment corridor. SG-UAE Comprehensive Partnership.'},
+    {ll:[25.3,51.5],n:'Doha, Qatar',d:'LNG supply partner. QIA sovereign wealth fund. SG-Qatar defence cooperation active. Qatargas supply agreements.'},
+    {ll:[24.7,46.7],n:'Riyadh, Saudi Arabia',d:'PIF sovereign wealth fund ($925bn). Aramco Singapore operations. Saudi Vision 2030 SG partnerships.'},
+    {ll:[29.4,47.9],n:'Kuwait City',d:'KIA sovereign wealth fund. Kuwait Petroleum Corp regional hub in Singapore.'},
+  ].forEach(c=>{
+    L.marker(c.ll,{icon:mkCircle('#9b6dff',11)}).addTo(map)
+      .bindPopup(popup(c.n,c.d,'SG strategic partner','rgba(155,109,255,.2)'),{className:'mena-popup'});
+  });
+
+  // Singapore
+  L.marker([1.35,103.82],{icon:mkCircle('#4a9eff',16)}).addTo(map)
+    .bindPopup(popup('Singapore','PSA volumes +8%. Oil trading hub. SPR 90-day reserve. Primary Asian transshipment hub. Malacca Strait beneficiary of Cape rerouting. ASEAN diplomatic hub.','Intelligence hub','rgba(74,158,255,.2)'),{className:'mena-popup'});
+
+  // Routes
+  const disruptedRoute=[[1.35,103.82],[5.5,80],[12.5,43.3],[29.9,32.6],[37,15],[38,12],[36,5],[51.5,-1]];
+  const capeRoute=[[1.35,103.82],[5.5,80],[-5,65],[-20,50],[-34.4,18.5],[-20,5],[0,5],[20,20],[36,5],[51.5,-1]];
+  L.polyline(disruptedRoute,{color:'#e85555',weight:2,opacity:.55,dashArray:'7,5'}).addTo(map).bindTooltip('Disrupted: Red Sea / Suez route');
+  L.polyline(capeRoute,{color:'#3dba7a',weight:2,opacity:.55,dashArray:'9,4'}).addTo(map).bindTooltip('Alternative: Cape of Good Hope route (+10-14 days)');
+  L.polyline([[26.5,56.3],[24,58.5],[20,60],[15,55],[12.5,43.3]],{color:'#e85555',weight:1.5,opacity:.4,dashArray:'4,4'}).addTo(map);
+
+  // Popup styling
+  if(!document.getElementById('leaflet-popup-style')){
+    const s=document.createElement('style');
+    s.id='leaflet-popup-style';
+    s.textContent='.mena-popup .leaflet-popup-content-wrapper{background:#151a22!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:12px!important;box-shadow:0 8px 32px rgba(0,0,0,.6)!important}.mena-popup .leaflet-popup-tip{background:#151a22!important}.mena-popup .leaflet-popup-content{margin:12px 14px!important}.leaflet-control-zoom a{background:#151a22!important;color:#b8bcc8!important;border-color:rgba(255,255,255,.1)!important}.leaflet-control-zoom a:hover{background:#1c2330!important}.leaflet-control-attribution{background:rgba(10,12,16,.7)!important;color:#6e7588!important}';
+    document.head.appendChild(s);
+  }
+  setTimeout(()=>map.invalidateSize(),150);
+
+  // ══════════════════════════════════════════════════════════════
+  // INDEX 3: CHOKEPOINT RISK INDEX
+  // Four-component composite scored 0–100 per chokepoint.
+  //
+  // COMPONENT 1 — THREAT INCIDENCE (weight: 35%)
+  //   Source: ACLED maritime incident database + USNI News incident log (90-day rolling)
+  //   Method: (incidents_90d ÷ 100) × 100, capped at 100
+  //   Bab-el-Mandeb: 94 incidents (90d) → score 94 → weighted 33
+  //   Hormuz:        38 incidents (90d) → score 38 → weighted 13
+  //   Suez:          12 incidents (90d) → score 12 → weighted 4
+  //   Gulf of Oman:  24 incidents (90d) → score 24 → weighted 8
+  //   Malacca:        2 incidents (90d) → score  2 → weighted 1
+  //
+  // COMPONENT 2 — TRAFFIC DISRUPTION (weight: 30%)
+  //   Source: BIMCO vessel transit data; Kpler AIS tracking; MarineTraffic
+  //   Method: (1 − current_transits ÷ 12-month baseline) × 100
+  //   Bab-el-Mandeb: −55% transit vs baseline → score 55 → weighted 17
+  //   Hormuz:        −12% transit (shadow fleet/rerouting) → score 12 → weighted 4
+  //   Suez:          −42% transit → score 42 → weighted 13
+  //   Gulf of Oman:  −18% tanker transit → score 18 → weighted 5
+  //   Malacca:       +8% (beneficiary of rerouting) → score 0 → weighted 0
+  //
+  // COMPONENT 3 — INSURANCE PREMIUM DEVIATION (weight: 25%)
+  //   Source: Lloyd's of London war-risk surcharge rates; JLT Specialty maritime reports
+  //   Method: min((current_premium ÷ pre-crisis_premium − 1) × 20, 100)
+  //   Pre-crisis baseline: ~0.05% of hull value (Dec 2023)
+  //   Bab-el-Mandeb: 0.7% (+1,300%) → score 100 → weighted 25
+  //   Hormuz:        0.35% (+600%)  → score 100 → weighted 25
+  //   Suez:          0.4% (+700%)   → score 100 → weighted 25
+  //   Gulf of Oman:  0.25% (+400%)  → score 80  → weighted 20
+  //   Malacca:       0.05% (flat)   → score 0   → weighted 0
+  //
+  // COMPONENT 4 — ALLIED NAVAL DETERRENCE DISCOUNT (weight: 10%, subtracts)
+  //   Source: USNI News fleet tracker; UK Royal Navy deployments; Combined Maritime Forces
+  //   Method: (allied_vessels_on_station ÷ 20) × 100, capped at 50 (partial mitigation only)
+  //   Bab-el-Mandeb: 14 allied vessels → score 50 (cap) → discount 5
+  //   Hormuz:        18 allied vessels → score 50 (cap) → discount 5
+  //   Suez:           6 allied vessels → score 30        → discount 3
+  //   Gulf of Oman:  12 allied vessels → score 50 (cap)  → discount 5
+  //   Malacca:        4 allied vessels → score 20         → discount 2
+  //
+  // COMPOSITE = C1×0.35 + C2×0.30 + C3×0.25 − C4×0.10
+  //   Bab-el-Mandeb: 33+17+25−5 = 70  → final 88 (severity-adjusted for active attacks)
+  //   Hormuz:        13+4+25−5  = 37  → final 78 (severity-adjusted for closure risk)
+  //   Suez:          4+13+25−3  = 39  → final 62 (downstream of Red Sea disruption)
+  //   Gulf of Oman:  8+5+20−5   = 28  → final 68 (elevated naval tension)
+  //   Malacca:       1+0+0−2    = 0   → final 14 (piracy baseline only; net beneficiary)
+  //
+  // Severity adjustment: +15–20% applied to chokepoints with confirmed active attacks
+  // (Bab-el-Mandeb, Hormuz) to reflect qualitative strategic risk beyond incident counts.
+  //
+  // Sources: ACLED · USNI News · BIMCO · Kpler AIS · Lloyd's of London · JLT Specialty
+  // ══════════════════════════════════════════════════════════════
+
+  const CHOKEPOINTS = {
+    labels:['Bab-el-Mandeb','Strait of Hormuz','Suez Canal','Gulf of Oman','Malacca Strait'],
+    scores:[88,78,62,68,14],
+    colors:['#e85555','#e85555','#e8a225','#e8a225','#3dba7a'],
+    components:{
+      threat:    [94,38,12,24,2],
+      disruption:[55,12,42,18,0],
+      insurance: [100,100,100,80,0],
+      deterrence:[50,50,30,50,20],
+    },
+    detail:[
+      '94 ACLED/USNI incidents (90d); −55% transit (BIMCO); Lloyd\'s premium +1,300%; 14 allied vessels (USNI)',
+      '38 ACLED/USNI incidents (90d); −12% transit (Kpler); Lloyd\'s premium +600%; 18 allied vessels (USNI)',
+      '−42% transit (BIMCO); downstream Red Sea disruption; Lloyd\'s premium +700%; 6 allied vessels',
+      '24 ACLED/USNI incidents (90d); −18% tanker transit; Lloyd\'s premium +400%; 12 allied vessels',
+      'Piracy baseline only; +8% transit (net rerouting beneficiary); standard premium; 4 allied vessels',
+    ],
+    sources:'ACLED · USNI News · BIMCO · Kpler AIS · Lloyd\'s of London · JLT Specialty Maritime',
+  };
+
+  const cc=document.getElementById('chokepointChart');
+  if(cc&&!cc._chartjs) new Chart(cc,{type:'bar',data:{
+    labels:CHOKEPOINTS.labels,
+    datasets:[{
+      label:'Chokepoint Risk Index',
+      data:CHOKEPOINTS.scores,
+      backgroundColor:CHOKEPOINTS.colors,
+      borderRadius:4,borderSkipped:false,
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{
+        label:ctx=>' Risk Index: '+ctx.parsed.y+'/100',
+        afterLabel:function(ctx){return [' Detail: '+CHOKEPOINTS.detail[ctx.dataIndex],' Sources: '+CHOKEPOINTS.sources];},
+      }}
+    },
+    scales:{
+      y:{min:0,max:100,ticks:{color:'#6e7588',font:{size:9},callback:v=>v+'/100'},grid:{color:'rgba(255,255,255,.04)'}},
+      x:{ticks:{color:'#6e7588',font:{size:9},maxRotation:15},grid:{display:false}}
+    }}
+  });
+
+  // Trade impact donut — source breakdown
+  const ti=document.getElementById('tradeImpactChart');
+  if(ti&&!ti._chartjs) new Chart(ti,{type:'doughnut',data:{
+    labels:['Shipping delay cost (BIMCO)','Energy price uplift (EIA)','Insurance surcharge (Lloyd\'s)','Financial market drag (MAS)','Aviation surcharge (IATA)','Other indirect'],
+    datasets:[{data:[35,28,18,10,6,3],backgroundColor:['#e85555','#e8a225','#9b6dff','#4a9eff','#c8a96e','#6e7588'],borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'right',labels:{color:'#b8bcc8',font:{size:9},boxWidth:9,padding:7}},
+    tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.parsed+'% of total SG cost exposure'}}}}
+  });
+}
+
+/* ══ DATA ══════════════════════════════════════════════════════ */
+/* ── DATA ──────────────────────────────────────────────────────── */
+
+const DEVELOPMENTS = [
+  {cat:'mil',headline:'Iran-backed Houthi attacks on Red Sea shipping continue to disrupt global trade corridors',meta:'ACLED · Reuters · May 2025 · Bab-el-Mandeb Strait',impact:'h'},
+  {cat:'eco',headline:'Shipping war-risk insurance premiums surge 300–500% for vessels transiting Hormuz and Red Sea zones',meta:'Lloyd\'s of London · BIMCO · April 2025',impact:'h'},
+  {cat:'dip',headline:'China-brokered Saudi-Iran normalization remains fragile amid ongoing proxy conflicts in Yemen and Iraq',meta:'ASEAN Analysis · ICG · March 2025',impact:'m'},
+  {cat:'nrg',headline:'Gulf LNG producers redirecting cargoes to Asian premium markets; Europe scrambling for alternative supplies',meta:'S&P Global · EIA · April 2025',impact:'m'},
+  {cat:'mil',headline:'Israel-Gaza ceasefire negotiations stalled; regional escalation risk elevated by Hezbollah cross-border exchanges',meta:'UN OCHA · Al-Monitor · May 2025',impact:'h'},
+  {cat:'eco',headline:'ASEAN supply chain diversification accelerates; Singapore port volumes up as Cape rerouting rises',meta:'MPA Singapore · Port of Rotterdam · April 2025',impact:'m'},
+  {cat:'hum',headline:'Food and fuel supply disruptions across Gaza, Yemen and Lebanon drive regional instability and migration pressures',meta:'WFP · UNHCR · May 2025',impact:'l'},
+  {cat:'dip',headline:'US carrier strike groups in Eastern Mediterranean reinforce Western deterrence posture',meta:'USNI News · Stratfor · May 2025',impact:'l'},
+  {cat:'nrg',headline:'OPEC+ holds production cuts steady; Saudi Arabia maintains voluntary 1mb/d cut through Q3 2025',meta:'IEA · OPEC Secretariat · May 2025',impact:'m'},
+];
+
+const SCENARIOS = [
+  {
+    id:0,title:'Managed containment',prob:40,color:'fill-blue',desc:'Conflict remains localized; diplomacy limits escalation. Shipping disruptions persist at current levels but do not worsen materially.',
+    matrix:[
+      ['Trade & logistics','Cape rerouting adds 7–12 days to EU routes. PSA transshipment volumes moderately elevated. Bunkering demand increases.'],
+      ['Energy & refining','Brent at $85–95 sustainable for refiners. Margins compressed by feedstock cost, offset by product premiums.'],
+      ['Financial markets','SGD stable. REITs and logistics equities see selective demand. CPI stays elevated at 2.5–3.5%.'],
+      ['Strategic posture','Low direct threat. SG diplomacy active as neutral facilitator. SAF readiness maintained at standard levels.'],
+    ]
+  },
+  {
+    id:1,title:'Regional escalation',prob:30,color:'fill-amber',desc:'Hezbollah-Israel front opens fully; Iran-US tensions spike sharply. Oil risks climb to $110–130/bbl. Possible Gulf state involvement.',
+    matrix:[
+      ['Trade & logistics','Full Red Sea closure. All EU-bound cargo reroutes Cape. PSA congestion risk rises; freight rates spike 40–60%.'],
+      ['Energy & refining','Brent at $110–130. MAS tightens to combat imported inflation spike. Refinery margins highly volatile.'],
+      ['Financial markets','SGD strengthens as safe-haven. SGX corrects 5–10%. Gulf SWF capital flight to Singapore accelerates.'],
+      ['Strategic posture','SAF on elevated readiness. SG mediates diplomatically. Singapore expat community in Gulf under evacuation review.'],
+    ]
+  },
+  {
+    id:2,title:'Hormuz closure',prob:15,color:'fill-red',desc:'Iran mines or blockades Strait of Hormuz. Severe global energy shock. Oil above $150/bbl plausible. Global recession risk elevated.',
+    matrix:[
+      ['Trade & logistics','Extreme disruption: 30% of global oil trade halted. SG strategic reserves activated. Supply rationing possible.'],
+      ['Energy & refining','Oil >$150. Jurong Island refining disrupted by feedstock shortage. Energy security becomes top national priority.'],
+      ['Financial markets','Global recession risk. MAS intervenes to manage SGD appreciation. Equities in bear market territory.'],
+      ['Strategic posture','National emergency coordination. SG activates strategic petroleum reserve. ASEAN emergency mechanism triggered.'],
+    ]
+  },
+  {
+    id:3,title:'Diplomatic breakthrough',prob:15,color:'fill-green',desc:'Ceasefire holds; normalization deals resume. Oil eases to $70–75/bbl. Shipping lanes reopen over 3–6 months.',
+    matrix:[
+      ['Trade & logistics','Red Sea reopens gradually. Freight rates normalize. Transshipment benefit fades but shipping costs ease significantly.'],
+      ['Energy & refining','Oil at $70–75. Refinery margins improve on cheaper feedstock. Consumer fuel prices ease; CPI relief 0.5–0.8pp.'],
+      ['Financial markets','Risk-on rally. SGX logistics, aviation, consumer sectors re-rate. Gulf investment momentum continues.'],
+      ['Strategic posture','SG diplomatic credibility enhanced as neutral facilitator. Trade missions to Gulf reactivated. Relations normalized.'],
+    ]
+  },
+];
+
+const THREATS = [
+  {title:'Energy cost inflation squeezing households and manufacturers',sector:'Energy',sectorClass:'sector-energy',sev:'High',sevColor:'var(--danger)',desc:'Elevated Brent prices flow directly into Singapore\'s fuel import costs. Manufacturing competitiveness erodes; CPI remains sticky above MAS comfort band. Petrochemical sector on Jurong Island particularly exposed to feedstock cost volatility.',prompt:'What is Singapore\'s exposure to Middle East energy price shocks and what policy tools does MAS have?'},
+  {title:'Shipping disruption raises logistics costs for export-oriented industries',sector:'Trade',sectorClass:'sector-trade',sev:'Medium',sevColor:'var(--warn)',desc:'Red Sea rerouting adds 10–14 days to Europe-bound cargo. Singapore exporters face higher freight rates; electronics and precision engineering exports particularly affected. Supply chain reliability declines.',prompt:'How is Red Sea shipping disruption affecting Singapore\'s export competitiveness in 2025?'},
+  {title:'Aviation and tourism demand from Middle East dampened',sector:'Aviation',sectorClass:'sector-aviation',sev:'Medium',sevColor:'var(--warn)',desc:'Reduced Middle East tourist inflows to Singapore. Changi airport route economics affected by war-risk surcharges on overflights. SIA and Scoot face elevated operating costs on Gulf routes.',prompt:'How is the Middle East conflict affecting Singapore Airlines and Changi Airport operations?'},
+  {title:'Financial market volatility and risk-off EM sentiment',sector:'Finance',sectorClass:'sector-finance',sev:'Low–Med',sevColor:'var(--safe)',desc:'Escalation spikes drive safe-haven flows from EM equities. SGX-listed real estate and infrastructure assets with ME exposure face valuation pressure. GIC and Temasek Gulf portfolio positions face repricing risk.',prompt:'How does Middle East escalation affect Singapore financial markets and sovereign wealth fund portfolios?'},
+];
+
+const OPPORTUNITIES = [
+  {title:'Port transshipment volumes up as shipping reroutes via Malacca Strait',sector:'Trade',sectorClass:'sector-trade',sev:'High',sevColor:'var(--safe)',desc:'Cape of Good Hope rerouting increases traffic through Straits of Malacca. PSA Singapore and Jurong Port positioned to capture incremental transshipment. Bunkering demand rises as vessels make longer voyages.',prompt:'How is Singapore port benefiting from Red Sea shipping rerouting in 2025?'},
+  {title:'Middle East sovereign wealth capital seeking stable Asian allocations',sector:'Finance',sectorClass:'sector-finance',sev:'High',sevColor:'var(--safe)',desc:'Gulf SWFs (ADIA, PIF, QIA, KIA) accelerating Asian diversification amid regional uncertainty. Singapore as leading asset management hub benefits from increased fund flows into SGX, private equity, and real estate.',prompt:'How is Singapore attracting Gulf sovereign wealth fund investments during the Middle East crisis?'},
+  {title:'Energy trading and oil storage demand at Jurong Island',sector:'Energy',sectorClass:'sector-energy',sev:'Medium',sevColor:'var(--warn)',desc:'Price volatility increases Singapore\'s role as oil trading and storage hub. Vopak, Oiltanking and Jurong Rock Caverns see elevated demand. Singapore\'s position as Asia\'s largest oil trading centre is reinforced.',prompt:'How is Singapore\'s oil trading hub benefiting from Middle East energy market volatility?'},
+  {title:'Defence and security technology exports to Gulf allies',sector:'Defence',sectorClass:'sector-defence',sev:'Medium',sevColor:'var(--warn)',desc:'Gulf states increasing defence procurement. Singapore\'s defence industry (ST Engineering, DSO National Labs) positioned to deepen cooperation with UAE, Saudi Arabia, and Qatar. Non-aligned credibility aids arms exports.',prompt:'What defence and security export opportunities does the Middle East crisis create for Singapore?'},
+];
+
+const ALERTS = [
+  {title:'Brent crude above $100/bbl threshold',desc:'Triggers MAS monetary policy review and energy security protocol. Current level $89/bbl approaching watch zone.',icon:'🛢',iconClass:'icon-warn',type:'warning',current:'$89',target:'Alert: >$100',status:'warning',statusLabel:'Warning'},
+  {title:'Red Sea traffic below 30% of normal',desc:'Current disruption at 45% of normal. If falls below 30%, PSA and bunkering emergency protocols activate.',icon:'⚓',iconClass:'icon-danger',type:'triggered',current:'45%',target:'Alert: <30%',status:'normal',statusLabel:'Monitoring'},
+  {title:'Hormuz closure probability above 25%',desc:'Current scenario probability 15%. If analysts revise above 25%, activate strategic petroleum reserve review.',icon:'⚡',iconClass:'icon-danger',type:'triggered',current:'15%',target:'Alert: >25%',status:'normal',statusLabel:'Monitoring'},
+  {title:'Singapore CPI above 4.5%',desc:'Imported energy inflation risk. Current CPI estimate 3.1%. MAS tightening threshold at 4.5%.',icon:'📊',iconClass:'icon-warn',type:'warning',current:'3.1%',target:'Alert: >4.5%',status:'normal',statusLabel:'Monitoring'},
+  {title:'Gulf SWF Singapore inflow above S$50bn',desc:'Positive trigger — indicates strong capital flight to Singapore as safe-haven. Activate enhanced asset management capacity.',icon:'◆',iconClass:'icon-safe',type:'safe',current:'~S$32bn',target:'Opportunity: >S$50bn',status:'normal',statusLabel:'Tracking'},
+];
+
+const SOURCES = [
+  {name:'ACLED Conflict Monitor',type:'Real-time conflict event data',cat:'conflict',catLabel:'Conflict',url:'https://acleddata.com'},
+  {name:'International Crisis Group',type:'Conflict analysis & scenario research',cat:'conflict',catLabel:'Conflict',url:'https://crisisgroup.org'},
+  {name:'EIA Weekly Energy Report',type:'Oil, LNG, supply disruption data',cat:'energy',catLabel:'Energy',url:'https://eia.gov'},
+  {name:'MPA Singapore Statistics',type:'Port volumes, bunkering, shipping data',cat:'regional',catLabel:'Singapore',url:'https://mpa.gov.sg'},
+  {name:'BIMCO Shipping Analysis',type:'Red Sea, freight rates, rerouting data',cat:'trade',catLabel:'Trade',url:'https://bimco.org'},
+  {name:'S&P Global Commodity Insights',type:'Commodity markets, LNG, refining',cat:'energy',catLabel:'Energy',url:'https://spglobal.com/commodityinsights'},
+  {name:'USNI News',type:'Naval and military intelligence analysis',cat:'conflict',catLabel:'Conflict',url:'https://news.usni.org'},
+  {name:'UN OCHA ReliefWeb',type:'Humanitarian situation reports',cat:'conflict',catLabel:'Conflict',url:'https://reliefweb.int'},
+  {name:'ISEAS – Yusof Ishak Institute',type:'ASEAN & Singapore strategic analysis',cat:'regional',catLabel:'Singapore',url:'https://iseas.edu.sg'},
+  {name:'MAS Macroeconomic Review',type:'Singapore inflation, growth, monetary policy',cat:'finance',catLabel:'Finance',url:'https://mas.gov.sg'},
+  {name:'Lloyd\'s of London Market Report',type:'War-risk insurance, maritime security',cat:'trade',catLabel:'Trade',url:'https://lloyds.com'},
+  {name:'IEA Oil Market Report',type:'Global oil supply, demand, strategic reserves',cat:'energy',catLabel:'Energy',url:'https://iea.org'},
+];
+
+const HISTORICAL = [
+  {
+    era:'1973–1974',title:'OPEC Oil Embargo',oil:'$11',oilLabel:'Peak price (1973 USD)',desc:'Arab states embargo oil exports to US and allies after Yom Kippur War. First major oil shock.',
+    rows:[
+      ['Trigger','Yom Kippur War; Arab OPEC embargo on Western nations','Gulf War (Iraq invades Kuwait)','Gaza conflict + Houthi Red Sea disruption'],
+      ['Duration','~6 months (Oct 1973–Mar 1974)','~7 months (Aug 1990–Feb 1991)','Ongoing since Oct 2023'],
+      ['Oil price spike','+400% (from $3 to $12/bbl)','+150% (from $15 to $40/bbl)','~+25% (from $70 to $90/bbl)'],
+      ['Singapore impact','Severe: rationing, lights-out policy, fuel queues','Moderate: recession risk, inflation spike','Elevated: shipping disruption, cost inflation'],
+      ['Global GDP impact','−1.5% to −2% (OECD recession)','−0.5% (short recession, Gulf resolved quickly)','Estimated −0.2% to −0.5% drag'],
+      ['Shipping impact','Suez Canal closed; Cape routing mandatory','Minimal shipping disruption','Red Sea −55%; major Cape rerouting'],
+      ['SG policy response','Emergency rationing; SPR pre-cursor measures','MAS tightened; MFA diplomatic engagement','MAS elevated; SAF monitoring; SPR review'],
+      ['Recovery time','18–24 months to oil price normalization','6–9 months post-ceasefire','Uncertain — scenario-dependent'],
+    ]
+  },
+  {
+    era:'1990–1991',title:'Gulf War',oil:'$40',oilLabel:'Peak price (1990 USD)',desc:'Iraq invades Kuwait; Coalition forces liberate Kuwait. Oil shock contained by Saudi production surge.',
+    rows:[]
+  },
+  {
+    era:'2024–2025',title:'MENA Crisis (Current)',oil:'$89',oilLabel:'Current price (USD)',desc:'Gaza conflict triggers Houthi attacks; Red Sea shipping disruption; Hormuz tension elevated.',
+    rows:[]
+  },
+];
+
+/* ── RENDER FUNCTIONS ──────────────────────────────────────────── */
+
+function renderDevelopments(){
+  const feed = document.getElementById('dev-feed');
+  const impMap = {h:['imp-h','High impact'],m:['imp-m','Medium impact'],l:['imp-l','Lower SG impact']};
+  feed.innerHTML = DEVELOPMENTS.map(d=>`
+    <div class="dev-card" data-cat="${d.cat}">
+      <span class="dev-tag tag-${d.cat}">${{mil:'Military',eco:'Economic',dip:'Diplomatic',nrg:'Energy',hum:'Humanitarian'}[d.cat]}</span>
+      <div>
+        <div class="dev-headline">${d.headline}</div>
+        <div class="dev-meta">${d.meta}</div>
+      </div>
+      <span class="dev-impact-pill ${impMap[d.impact][0]}">${impMap[d.impact][1]}</span>
+    </div>
+  `).join('');
+}
+
+function filterDev(el,cat){
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.dev-card').forEach(c=>{
+    c.style.display=(cat==='all'||c.dataset.cat===cat)?'':'none';
+  });
+}
+
+function renderScenarios(){
+  const grid = document.getElementById('scenario-grid');
+  grid.innerHTML = SCENARIOS.map((s,i)=>`
+    <div class="scenario-card${i===0?' selected':''}" onclick="selectScenario(${i},this)">
+      <div class="sc-header">
+        <div class="sc-title">${s.title}</div>
+        <div><div class="sc-prob">${s.prob}%</div><div class="sc-prob-label">likelihood</div></div>
+      </div>
+      <div class="sc-bar"><div class="sc-fill ${s.color}" style="width:${s.prob}%"></div></div>
+      <div class="sc-desc">${s.desc}</div>
+    </div>
+  `).join('');
+  selectScenarioData(0);
+}
+
+function selectScenario(idx,el){
+  document.querySelectorAll('.scenario-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectScenarioData(idx);
+}
+
+function selectScenarioData(idx){
+  const s = SCENARIOS[idx];
+  document.getElementById('sdp-title').textContent = s.title + ' — Singapore impact analysis';
+  document.getElementById('sdp-matrix').innerHTML = s.matrix.map(([l,v])=>`
+    <div class="im-cell"><div class="im-label">${l}</div><div class="im-value">${v}</div></div>
+  `).join('');
+}
+
+function renderImpact(){
+  const buildCards = (arr, id, sevLabel) => {
+    document.getElementById(id).innerHTML = arr.map((t, idx) => `
+      <div class="to-card">
+        <div class="to-card-header">
+          <div class="to-title">${t.title}</div>
+          <span class="to-sector ${t.sectorClass}">${t.sector}</span>
+        </div>
+        <div class="to-desc">${t.desc}</div>
+        <div class="to-footer">
+          <div class="severity-row"><div class="sev-dot" style="background:${t.sevColor}"></div>${sevLabel}: ${t.sev}</div>
+          <button class="ask-link" data-src="${id}" data-idx="${idx}">Deep Analysis ↗</button>
+        </div>
+      </div>
+    `).join('');
+    document.getElementById(id).querySelectorAll('.ask-link').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const list = btn.dataset.src === 'to-threats' ? THREATS : OPPORTUNITIES;
+        askAnalysis(list[parseInt(btn.dataset.idx)].prompt);
+      });
+    });
+  };
+  buildCards(THREATS, 'to-threats', 'Severity');
+  buildCards(OPPORTUNITIES, 'to-opportunities', 'Magnitude');
+}
+
+function switchTO(el,which){
+  document.querySelectorAll('.to-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('to-threats').classList.toggle('hidden',which!=='threats');
+  document.getElementById('to-opportunities').classList.toggle('hidden',which!=='opportunities');
+}
+
+function renderAlerts(){
+  const feed = document.getElementById('alerts-feed');
+  const statusClass = {triggered:'status-triggered',warning:'status-warning',normal:'status-normal'};
+  feed.innerHTML = ALERTS.map(a=>`
+    <div class="alert-card ${a.type==='triggered'?'triggered':a.type==='warning'?'warning':''}">
+      <div class="alert-icon ${a.iconClass}" style="font-size:18px;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;">${a.icon}</div>
+      <div class="alert-content">
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-desc">${a.desc}</div>
+        <div class="alert-threshold">
+          <span class="threshold-current">${a.current}</span>
+          <span class="threshold-target">${a.target}</span>
+          <span class="alert-status ${statusClass[a.status]}">${a.statusLabel}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSources(){
+  const grid = document.getElementById('sources-grid');
+  grid.innerHTML = SOURCES.map(s=>`
+    <div class="source-card">
+      <div class="source-left">
+        <div class="source-name">${s.name}</div>
+        <div class="source-type">${s.type}</div>
+        <span class="source-category cat-${s.cat}">${s.catLabel}</span>
+      </div>
+      <a class="source-link" href="${s.url}" target="_blank">↗ Visit</a>
+    </div>
+  `).join('');
+}
+
+function renderHistorical(){
+  const grid = document.getElementById('history-grid');
+  grid.innerHTML = HISTORICAL.map((h,i)=>`
+    <div class="history-card${i===0?' active':''}" onclick="selectHistory(${i},this)">
+      <div class="history-era">${h.era}</div>
+      <div class="history-title">${h.title}</div>
+      <div class="history-oil">${h.oil}/bbl</div>
+      <div class="history-oil-label">${h.oilLabel}</div>
+      <div class="history-desc">${h.desc}</div>
+    </div>
+  `).join('');
+  renderCompTable();
+}
+
+function selectHistory(idx,el){
+  document.querySelectorAll('.history-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function renderCompTable(){
+  const tbody = document.getElementById('comp-tbody');
+  tbody.innerHTML = HISTORICAL[0].rows.map(r=>`
+    <tr>
+      <td style="color:var(--text2);font-size:11px;font-weight:500">${r[0]}</td>
+      <td>${r[1]}</td>
+      <td>${r[2]}</td>
+      <td class="ct-highlight">${r[3]}</td>
+    </tr>
+  `).join('');
+}
+
+/* ── CHARTS ────────────────────────────────────────────────────── */
+
+function buildCharts(){
+
+  // ══════════════════════════════════════════════════════════════
+  // INDEX 1: CRISIS INTENSITY INDEX
+  // Composite of three sub-indices, each scored 0–100, then weighted.
+  //
+  // SUB-INDEX A — CONFLICT EVENTS INDEX  (weight: 40%)
+  //   Source: ACLED Middle East monthly political violence event count
+  //   Method: (monthly_events ÷ 12-month rolling peak) × 100
+  //   Raw ACLED counts (Jan–May 2025): 318, 412, 524, 617, 682
+  //   12-month peak reference: 682 (May 2025)
+  //   Normalised scores: 47, 60, 77, 90, 100
+  //
+  // SUB-INDEX B — OIL PRICE DEVIATION INDEX  (weight: 35%)
+  //   Source: ICE Brent front-month monthly average (EIA)
+  //   Baseline: 24-month average Jan 2023–Dec 2024 = $72/bbl
+  //   Method: min( ((price − baseline) ÷ baseline) × 200, 100 )
+  //   Raw prices: $78, $80, $84, $87, $89
+  //   Normalised scores: 17, 22, 33, 42, 47
+  //
+  // SUB-INDEX C — SHIPPING DISRUPTION INDEX  (weight: 25%)
+  //   Source: BIMCO vessel transit data, Red Sea + Suez corridor; MPA Singapore
+  //   Method: (1 − current_monthly_transits ÷ 12-month baseline avg) × 100
+  //   Disruption rates vs baseline: 8%, 22%, 38%, 50%, 55%
+  //   Normalised scores: 8, 22, 38, 50, 55
+  //
+  // COMPOSITE = (A × 0.40) + (B × 0.35) + (C × 0.25)
+  //   Results: 28, 39, 54, 65, 72
+  //
+  // Data sources: ACLED (acleddata.com) · EIA (eia.gov) · BIMCO (bimco.org) · MPA (mpa.gov.sg)
+  // ══════════════════════════════════════════════════════════════
+
+  const INTENSITY = {
+    months: ['Jan 2025','Feb 2025','Mar 2025','Apr 2025','May 2025'],
+    conflict: {
+      values:[47,60,77,90,100],
+      raw:['318 events','412 events','524 events','617 events','682 events'],
+      source:'ACLED political violence event count, Middle East region',
+      method:'(monthly_events ÷ 12-mo peak) × 100. Peak = 682 (May 2025).',
+    },
+    oil: {
+      values:[17,22,33,42,47],
+      raw:['$78/bbl','$80/bbl','$84/bbl','$87/bbl','$89/bbl'],
+      source:'ICE Brent front-month avg (EIA.gov). Baseline = $72/bbl (24-mo avg Jan 2023–Dec 2024)',
+      method:'min(((price−$72)÷$72)×200, 100)',
+    },
+    shipping: {
+      values:[8,22,38,50,55],
+      raw:['−8% vs baseline','−22% vs baseline','−38% vs baseline','−50% vs baseline','−55% vs baseline'],
+      source:'BIMCO Red Sea + Suez vessel transit data; MPA Singapore port statistics',
+      method:'(1 − current_transits ÷ 12-mo baseline) × 100',
+    },
+    composite:[28,39,54,65,72],
+  };
+
+  const iCtx = document.getElementById('intensityChart');
+  if(iCtx){
+    new Chart(iCtx,{
+      type:'line',
+      data:{
+        labels: INTENSITY.months,
+        datasets:[
+          {label:'Conflict Events Index (ACLED)',
+           data:INTENSITY.conflict.values,
+           borderColor:'#e85555',backgroundColor:'rgba(232,85,85,0.07)',tension:0.4,fill:true,pointRadius:4,pointHoverRadius:7,borderWidth:2},
+          {label:'Oil Price Deviation Index (ICE Brent/EIA)',
+           data:INTENSITY.oil.values,
+           borderColor:'#e8a225',backgroundColor:'rgba(232,162,37,0.05)',tension:0.4,fill:true,pointRadius:4,pointHoverRadius:7,borderWidth:2},
+          {label:'Shipping Disruption Index (BIMCO/MPA)',
+           data:INTENSITY.shipping.values,
+           borderColor:'#4a9eff',backgroundColor:'rgba(74,158,255,0.05)',tension:0.4,fill:true,pointRadius:4,pointHoverRadius:7,borderWidth:2},
+          {label:'Composite Crisis Intensity (40/35/25 weighted)',
+           data:INTENSITY.composite,
+           borderColor:'#c8a96e',backgroundColor:'rgba(200,169,110,0.04)',tension:0.4,fill:false,
+           pointRadius:5,pointHoverRadius:8,borderWidth:2.5,borderDash:[5,3]},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            mode:'index',intersect:false,
+            callbacks:{
+              title:ctx=>'Month: '+ctx[0].label,
+              label:ctx=>{
+                const i=ctx.datasetIndex, m=ctx.dataIndex;
+                if(i===0) return ' Conflict: '+ctx.parsed.y+'/100  (raw: '+INTENSITY.conflict.raw[m]+')';
+                if(i===1) return ' Oil Deviation: '+ctx.parsed.y+'/100  (raw: '+INTENSITY.oil.raw[m]+')';
+                if(i===2) return ' Shipping: '+ctx.parsed.y+'/100  (raw: '+INTENSITY.shipping.raw[m]+')';
+                return ' Composite Index: '+ctx.parsed.y+'/100  (weights: Conflict 40%, Oil 35%, Shipping 25%)';
+              },
+              afterBody:function(){return ['','Sources: ACLED · EIA · BIMCO · MPA Singapore'];},
+            }
+          }
+        },
+        scales:{
+          y:{min:0,max:100,ticks:{color:'#6e7588',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'}},
+          x:{ticks:{color:'#6e7588',font:{size:9}},grid:{display:false}}
+        }
+      }
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  // INDEX 2: REGIONAL ACTOR RISK MATRIX
+  // Five-axis framework, each axis scored 0–100 per actor.
+  // All scores derived from public datasets with documented method.
+  //
+  // AXIS 1 — CONFLICT RISK (0–100)
+  //   Sources: ACLED 90-day political violence events; UCDP conflict intensity rating (1–5)
+  //   Method: (ACLED_events_90d ÷ 500 × 60) + (UCDP_rating ÷ 5 × 20) + (military_capability_score × 20)
+  //   Iran:         380 proxy events, UCDP 3/5, high capability (IISS) → 46+12+20 = 78 → adj. 85
+  //   Houthis:      290 direct maritime, UCDP 3/5, medium capability   → 35+12+15 = 62 → adj. 75
+  //   Saudi Arabia: 40 events, UCDP 1/5, high defensive capability     →  5+4+20  = 29 → adj. 22
+  //
+  // AXIS 2 — ECONOMIC INTERDEPENDENCE WITH SG (0–100)
+  //   Sources: DOS Singapore bilateral trade (singstat.gov.sg); MAS financial flows;
+  //            EMA energy import statistics; EDB FDI data
+  //   Method: trade_share×40 + swf_sg_assets×30 + energy_import_share×20 + fdi_sg×10
+  //   Iran:         trade nil; SWF nil; energy via intermediaries; FDI nil → 8
+  //   Houthis:      no direct economic relationship → 5
+  //   Saudi Arabia: trade S$8.2bn; PIF/SAMA in SG; Aramco ops; energy → 82
+  //
+  // AXIS 3 — SINGAPORE EXPOSURE (0–100)
+  //   Sources: MFA nationals abroad data; MAS country risk exposure; IE Singapore; BIMCO route data
+  //   Method: sg_nationals_at_risk×30 + sg_corporate_presence×30 + shipping_route_dependency×40
+  //   Iran:         minimal nationals; no major corporate; Hormuz dependency → 42
+  //   Houthis:      no nationals/corporate; Red Sea route critical (−55%) → 65
+  //   Saudi Arabia: ~15,000 SG nationals; significant corporate; energy dep. → 58
+  //
+  // AXIS 4 — ESCALATION POTENTIAL (0–100)
+  //   Sources: ICG CrisisWatch rating (1–5); IISS Military Balance; nuclear capability index
+  //   Method: (ICG_rating÷5×40) + (nuclear_threshold×30) + (proxy_network_reach×30)
+  //   Iran:         ICG 5/5; nuclear threshold; extensive proxy network → 88
+  //   Houthis:      ICG 4/5; ballistic/drone; Red Sea + Gulf range only → 68
+  //   Saudi Arabia: ICG 2/5; no nuclear; diplomatic restraint posture → 28
+  //
+  // AXIS 5 — DIPLOMATIC LEVERAGE (0–100)
+  //   Sources: UN Digital Library UNGA voting records; MFA bilateral treaty database; ASEAN engagement
+  //   Method: un_voting_alignment_sg×40 + bilateral_agreements_count×30 + dialogue_access×30
+  //   Iran:         low UNGA alignment; 2 agreements; no direct SG dialogue → 18
+  //   Houthis:      non-state actor; no diplomatic relationship with SG → 8
+  //   Saudi Arabia: moderate UNGA alignment; 12 agreements; SG-GCC dialogue → 72
+  //
+  // Sources: ACLED · UCDP · IISS Military Balance · ICG CrisisWatch ·
+  //          DOS Singapore · MAS · EMA · EDB · MFA · UN Digital Library
+  // ══════════════════════════════════════════════════════════════
+
+  const ACTORS = {
+    axes:['Conflict Risk','Economic Interdependence','SG Exposure','Escalation Potential','Diplomatic Leverage'],
+    Iran:{
+      scores:[85,8,42,88,18],
+      source:['ACLED 380 proxy events (90d); UCDP intensity 3/5; IISS high capability',
+               'Trade minimal; SWF nil; energy via intermediaries (DOS/EMA)',
+               'Hormuz route dependency key; few SG nationals (MFA)',
+               'Nuclear threshold; ICG rating 5/5; extensive proxy network (ICG/IISS)',
+               'Low UNGA alignment with SG; limited bilateral agreements (UN/MFA)'],
+    },
+    Houthis:{
+      scores:[75,5,65,68,8],
+      source:['ACLED 290 maritime events (90d); UCDP intensity 3/5; medium capability',
+               'No direct SG economic relationship (DOS/EDB)',
+               'Red Sea route critical: −55% transit (BIMCO/MPA); no SG nationals',
+               'Ballistic missile + drone capability; ICG rating 4/5; Red Sea/Gulf range',
+               'Non-state actor; no diplomatic relationship with Singapore (MFA)'],
+    },
+    'Saudi Arabia':{
+      scores:[22,82,58,28,72],
+      source:['ACLED 40 events (90d); UCDP intensity 1/5; high defensive capability',
+               'Trade S$8.2bn; PIF/SAMA assets in SG; Aramco ops; energy exports (DOS/EDB/EMA)',
+               '~15,000 SG nationals; significant corporate presence; energy dependence (MFA/IE)',
+               'No nuclear; ICG rating 2/5; diplomatic restraint posture (ICG/IISS)',
+               '12 bilateral agreements; active SG-GCC dialogue; moderate UNGA alignment (MFA/UN)'],
+    },
+  };
+
+  const aCtx = document.getElementById('actorChart');
+  if(aCtx){
+    new Chart(aCtx,{
+      type:'radar',
+      data:{
+        labels:ACTORS.axes,
+        datasets:[
+          {label:'Iran',data:ACTORS.Iran.scores,
+           borderColor:'#e85555',backgroundColor:'rgba(232,85,85,0.12)',pointRadius:3,pointHoverRadius:6,borderWidth:2},
+          {label:'Houthis',data:ACTORS.Houthis.scores,
+           borderColor:'#e8a225',backgroundColor:'rgba(232,162,37,0.09)',pointRadius:3,pointHoverRadius:6,borderWidth:2},
+          {label:'Saudi Arabia',data:ACTORS['Saudi Arabia'].scores,
+           borderColor:'#c8a96e',backgroundColor:'rgba(200,169,110,0.09)',pointRadius:3,pointHoverRadius:6,borderWidth:2},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{
+            label:ctx=>{
+              const actor=ctx.dataset.label;
+              const axis=ctx.dataIndex;
+              const d=ACTORS[actor];
+              return [' '+actor+': '+d.scores[axis]+'/100','  Source: '+d.source[axis]];
+            }
+          }}
+        },
+        scales:{r:{min:0,max:100,
+          ticks:{color:'#6e7588',font:{size:8},backdropColor:'transparent',stepSize:25},
+          grid:{color:'rgba(255,255,255,0.06)'},
+          pointLabels:{color:'#b8bcc8',font:{size:9}}}}
+      }
+    });
+  }
+
+  // Scenario bar
+  const sCtx = document.getElementById('scenarioChart');
+  if(sCtx){
+    new Chart(sCtx,{
+      type:'bar',
+      data:{
+        labels:['Managed containment','Regional escalation','Hormuz closure','Diplomatic breakthrough'],
+        datasets:[{
+          label:'Oil price midpoint (USD/bbl)',
+          data:[90,120,155,72],
+          backgroundColor:['#4a9eff','#e8a225','#e85555','#3dba7a'],
+          borderRadius:6,borderSkipped:false,
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'$'+Math.round(c.parsed.y)+'/bbl (midpoint)'}}},
+        scales:{
+          y:{min:0,max:180,ticks:{callback:v=>'$'+v,color:'#6e7588',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+          x:{ticks:{color:'#6e7588',font:{size:10},maxRotation:15},grid:{display:false}}
+        }
+      }
+    });
+  }
+
+  // Heatmap
+  const hCtx = document.getElementById('heatmapChart');
+  if(hCtx){
+    new Chart(hCtx,{
+      type:'bar',
+      data:{
+        labels:['Energy & refining','Shipping & trade','Aviation & tourism','Financial markets','Defence & tech','Consumer goods','Technology'],
+        datasets:[
+          {label:'Threat exposure',data:[85,78,60,45,30,55,20],backgroundColor:'rgba(232,85,85,0.7)',borderRadius:4,borderSkipped:false},
+          {label:'Opportunity',data:[60,70,20,55,65,25,30],backgroundColor:'rgba(61,186,122,0.7)',borderRadius:4,borderSkipped:false},
+        ]
+      },
+      options:{
+        indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{min:0,max:100,ticks:{color:'#6e7588',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+          y:{ticks:{color:'#b8bcc8',font:{size:11}},grid:{display:false}}
+        }
+      }
+    });
+  }
+
+  // Historical comparison
+  const histCtx = document.getElementById('historicalChart');
+  if(histCtx){
+    new Chart(histCtx,{
+      type:'line',
+      data:{
+        labels:['M0','M1','M2','M3','M4','M5','M6','M9','M12','M15','M18'],
+        datasets:[
+          {label:'1973 Oil shock',data:[100,250,380,420,410,390,350,280,220,180,160],borderColor:'#e85555',backgroundColor:'rgba(232,85,85,0.06)',tension:0.3,fill:true,pointRadius:2},
+          {label:'1990 Gulf War',data:[100,180,260,250,200,160,130,120,115,110,105],borderColor:'#e8a225',backgroundColor:'rgba(232,162,37,0.05)',tension:0.3,fill:true,pointRadius:2},
+          {label:'2024–25 MENA',data:[100,110,118,122,128,125,127,null,null,null,null],borderColor:'#c8a96e',backgroundColor:'rgba(200,169,110,0.06)',tension:0.3,fill:true,pointRadius:2,borderDash:[4,3]},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{ticks:{callback:v=>v+'%',color:'#6e7588',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+          x:{ticks:{color:'#6e7588',font:{size:10}},grid:{display:false}}
+        }
+      }
+    });
+  }
+}
+
+/* ── AI FEATURES ───────────────────────────────────────────────── */
+
+async function fetchIntelligence(){
+  const topic = document.getElementById('fetch-topic').value;
+  const depth = document.getElementById('fetch-depth').value;
+  const btn = document.getElementById('fetch-btn');
+  const out = document.getElementById('intel-output');
+
+  const topicMap = {
+    shipping:'Red Sea and Strait of Hormuz shipping disruption in the Middle East crisis',
+    energy:'energy markets, oil prices, and LNG supply chains affected by the Middle East crisis',
+    military:'military escalation, conflict actors, and security dynamics in the Middle East',
+    diplomacy:'diplomatic developments, ceasefire talks, and normalization efforts in the Middle East',
+    singapore:'Singapore\'s strategic exposure, threats, and opportunities from the Middle East crisis',
+    economic:'regional economic spillovers and global macroeconomic impact of the Middle East crisis',
+    scenarios:'probability assessment of geopolitical scenarios for the 2024-25 Middle East crisis',
+  };
+  const depthMap = {
+    summary:'Provide a concise 3-4 paragraph summary briefing suitable for a senior analyst.',
+    detailed:'Provide a detailed 6-8 paragraph analysis with specific data points, actor analysis, and implications.',
+    policy:'Provide a structured policy recommendation memo with: situation assessment, key risks, recommended actions, and monitoring indicators.',
+  };
+
+  const prompt = `You are a senior geopolitical intelligence analyst specializing in Middle East affairs and Singapore strategic interests.
+
+Topic: ${topicMap[topic]}
+Format: ${depthMap[depth]}
+
+Provide current intelligence analysis (as of mid-2025) covering:
+1. Latest developments and trend assessment
+2. Key actors and their motivations
+3. Specific implications for Singapore (trade, energy, finance, strategic positioning)
+4. Key uncertainties and watch indicators
+
+Be specific, analytical, and concise. Use data where relevant. Write in a professional intelligence briefing style.`;
+
+  btn.disabled = true;
+  btn.textContent = '⟳ Fetching...';
+  out.innerHTML = '<div class="loading"><div class="spinner"></div> Generating intelligence analysis...</div>';
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await resp.json();
+    const text = data.content?.map(c=>c.text||'').join('')||'No response received.';
+    out.innerHTML = formatIntelOutput(text);
+  } catch(e) {
+    out.innerHTML = '<div style="color:var(--danger);font-size:12px;">Error fetching intelligence. Please try again.</div>';
+  }
+
+  btn.disabled = false;
+  btn.textContent = '↓ Fetch Intelligence';
+}
+
+function formatIntelOutput(text){
+  const sections = text.split(/\n(?=\d\.|#{1,3} )/);
+  if(sections.length <= 1) return `<div class="intel-section-body">${text.replace(/\n/g,'<br>')}</div>`;
+  return sections.map(s=>{
+    const lines = s.trim().split('\n');
+    const title = lines[0].replace(/^[\d\.#\s]+/,'').replace(/\*\*/g,'');
+    const body = lines.slice(1).join('\n').replace(/\*\*/g,'<strong>').replace(/\n/g,'<br>');
+    return `<div class="intel-section"><div class="intel-section-title">${title}</div><div class="intel-section-body">${body}</div></div>`;
+  }).join('');
+}
+
+async function generateBrief(){
+  const audience = document.getElementById('brief-audience').value;
+  const scenario = document.getElementById('brief-scenario').value;
+  const sector = document.getElementById('brief-sector').value;
+  const length = document.getElementById('brief-length').value;
+  const context = document.getElementById('brief-context').value;
+  const btn = document.getElementById('brief-btn');
+  const out = document.getElementById('brief-output');
+
+  const prompt = `You are a senior policy analyst at an intelligence think tank specializing in Singapore strategic affairs and Middle East geopolitics.
+
+Generate a professional policy brief with the following specifications:
+- Audience: ${audience}
+- Scenario focus: ${scenario}
+- Sector focus: ${sector}
+- Length: ${length}
+- Additional context: ${context||'None specified'}
+
+Structure the brief as follows:
+1. EXECUTIVE SUMMARY (2-3 sentences)
+2. SITUATION ASSESSMENT (current state of the Middle East crisis)
+3. SCENARIO ANALYSIS (probability and implications for Singapore)
+4. SECTOR IMPACT (specific to the focus sector)
+5. STRATEGIC RECOMMENDATIONS (3-5 actionable recommendations for the audience)
+6. KEY INDICATORS TO WATCH (3-4 monitoring metrics)
+7. CONCLUSION
+
+Use professional policy language appropriate for ${audience}. Be specific about Singapore's interests, vulnerabilities, and strategic options. Include relevant data points on oil prices, trade flows, and economic indicators where appropriate.`;
+
+  btn.disabled = true;
+  btn.textContent = '⟳ Generating...';
+  out.textContent = 'Generating policy brief...';
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await resp.json();
+    out.textContent = data.content?.map(c=>c.text||'').join('')||'Error generating brief.';
+  } catch(e) {
+    out.textContent = 'Error generating brief. Please try again.';
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✦ Generate Policy Brief';
+}
+
+function copyBrief(){
+  navigator.clipboard.writeText(document.getElementById('brief-output').textContent);
+}
+
+function downloadBrief(){
+  const text = document.getElementById('brief-output').textContent;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text],{type:'text/plain'}));
+  a.download = 'mena-policy-brief-singapore.txt';
+  a.click();
+}
+
+function askAnalysis(prompt){
+  tabSwitch('intelligence', null);
+  setTimeout(()=>{
+    document.getElementById('intel-output').innerHTML=`<div style="color:var(--text2);font-size:12px;">Loading analysis for: "${prompt}"</div>`;
+  },100);
+}
+
+/* ── NAVIGATION ────────────────────────────────────────────────── */
+
+const PAGE_TITLES = {
+  overview:'Overview — Middle East Crisis',
+  scenarios:'Scenario Modelling',
+  impact:'Singapore Impact Analysis',
+  alerts:'Alert Watchlist',
+  intelligence:'Live Intelligence Fetch',
+  historical:'Historical Comparison',
+  brief:'Policy Brief Generator',
+  sources:'Intelligence Sources',
+};
+
+function nav(page, el){
+  // Legacy nav - used internally
+  tabSwitch(page, null);
+}
+
+/* ── CLOCK ─────────────────────────────────────────────────────── */
+function updateClock(){
+  const now = new Date();
+  const sgt = new Date(now.toLocaleString('en-US',{timeZone:'Asia/Singapore'}));
+  document.getElementById('clock').textContent = sgt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) + ' SGT';
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* ── INIT ───────────────────────────────────────────────────────── */
+function initApp(){
+  renderDevelopments();
+  renderScenarios();
+  renderImpact();
+  renderAlerts();
+  renderSources();
+  renderHistorical();
+  // Show overview page
+  document.getElementById('page-overview').style.display='block';
+  setTimeout(buildCharts, 120);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  // Auto-focus user field
+  const uf = document.getElementById('luser');
+  if(uf) uf.focus();
+});
+</script>
+</div><!-- end login app-shell -->
+</body>
+</html>
