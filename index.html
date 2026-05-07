@@ -660,39 +660,39 @@ button{cursor:pointer;font-family:inherit}
   <div class="page" id="page-overview" style="display:none">
     <div class="page-header">
       <div class="page-title">Crisis <em>Overview</em></div>
-      <div class="page-desc">Real-time tracking of Middle East developments and Singapore's strategic exposure. Updated continuously from public intelligence sources.</div>
+      <div class="page-desc">Real-time tracking of Middle East developments and Singapore's strategic exposure. <strong style="color:var(--accent)">Data refreshed 7 May 2026</strong> — reflecting Hormuz blockade, US-Iran talks, MAS April tightening, and PSA 2025 record volumes.</div>
     </div>
 
     <div class="metrics-row">
       <div class="metric-card">
         <div class="metric-label">Brent Crude</div>
-        <div class="metric-value">$89</div>
-        <div class="metric-delta delta-up">↑ +18% vs 2023 avg</div>
-        <div class="metric-bar"><div class="metric-bar-fill" style="width:68%;background:var(--warn)"></div></div>
+        <div class="metric-value">$102</div>
+        <div class="metric-delta delta-up">↑ +65% since Jan 2026 · OilPriceAPI 6 May</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:85%;background:var(--warn)"></div></div>
       </div>
       <div class="metric-card">
         <div class="metric-label">Red Sea Traffic</div>
-        <div class="metric-value">−55%</div>
-        <div class="metric-delta delta-up">↑ Cape rerouting</div>
-        <div class="metric-bar"><div class="metric-bar-fill" style="width:45%;background:var(--danger)"></div></div>
+        <div class="metric-value">−52%</div>
+        <div class="metric-delta delta-up">↑ 30–35 vs 70 vessels/day · BIMCO</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:52%;background:var(--danger)"></div></div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Hormuz Risk</div>
-        <div class="metric-value sm">Constrained</div>
-        <div class="metric-delta delta-up">↑ High tension</div>
-        <div class="metric-bar"><div class="metric-bar-fill" style="width:72%;background:var(--danger)"></div></div>
+        <div class="metric-label">Hormuz Status</div>
+        <div class="metric-value sm">Blockaded</div>
+        <div class="metric-delta delta-up">↑ Closed since Feb 2026 · MAS MPS</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:95%;background:var(--danger)"></div></div>
       </div>
       <div class="metric-card">
         <div class="metric-label">PSA Volumes</div>
-        <div class="metric-value">+8%</div>
-        <div class="metric-delta delta-dn">↑ Rerouting benefit</div>
-        <div class="metric-bar"><div class="metric-bar-fill" style="width:58%;background:var(--safe)"></div></div>
+        <div class="metric-value">+11%</div>
+        <div class="metric-delta delta-dn">↑ 44.5m TEU in 2025 · MPA Singapore</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:72%;background:var(--safe)"></div></div>
       </div>
       <div class="metric-card">
         <div class="metric-label">SG Threat Level</div>
-        <div class="metric-value sm">Elevated</div>
-        <div class="metric-delta delta-neu">→ Indirect exposure</div>
-        <div class="metric-bar"><div class="metric-bar-fill" style="width:55%;background:var(--warn)"></div></div>
+        <div class="metric-value sm">High</div>
+        <div class="metric-delta delta-up">↑ MAS tightened Apr 2026</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:85%;background:var(--red)"></div></div>
       </div>
     </div>
 
@@ -815,12 +815,12 @@ button{cursor:pointer;font-family:inherit}
         <div class="card-body">
           <div class="chart-legend">
             <span class="legend-item"><span class="legend-swatch" style="background:var(--accent2)"></span>Managed containment</span>
-            <span class="legend-item"><span class="legend-swatch" style="background:var(--warn)"></span>Regional escalation</span>
-            <span class="legend-item"><span class="legend-swatch" style="background:var(--danger)"></span>Hormuz closure</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--warn)"></span>Active Hormuz blockade (current)</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--danger)"></span>Full escalation / deal collapse</span>
             <span class="legend-item"><span class="legend-swatch" style="background:var(--safe)"></span>Diplomatic breakthrough</span>
           </div>
           <div class="chart-wrap">
-            <canvas id="scenarioChart" role="img" aria-label="Bar chart of oil price ranges across four Middle East crisis scenarios">Managed containment $90, Regional escalation $120, Hormuz closure $155, Breakthrough $72.</canvas>
+            <canvas id="scenarioChart" role="img" aria-label="Bar chart of oil price ranges across four Middle East crisis scenarios — updated May 2026">Managed containment $90, Active Hormuz blockade $110, Full escalation $135, Breakthrough $88.</canvas>
           </div>
         </div>
       </div>
@@ -960,10 +960,10 @@ button{cursor:pointer;font-family:inherit}
         <div class="brief-field">
           <label>Focus scenario</label>
           <select id="brief-scenario">
-            <option>Managed containment (40% probability)</option>
-            <option>Regional escalation (30% probability)</option>
-            <option>Hormuz closure (15% probability)</option>
-            <option>Diplomatic breakthrough (15% probability)</option>
+            <option>Managed containment (15% probability — revised down)</option>
+            <option>Active Hormuz blockade (35% probability — current baseline)</option>
+            <option>Full escalation / deal collapse (20% probability)</option>
+            <option>Diplomatic breakthrough (30% probability — raised on US-Iran talks)</option>
             <option>All scenarios — probability-weighted</option>
           </select>
         </div>
@@ -1235,76 +1235,84 @@ function initCrisisMap(){
 /* ── DATA ──────────────────────────────────────────────────────── */
 
 const DEVELOPMENTS = [
-  {cat:'mil',headline:'Iran-backed Houthi attacks on Red Sea shipping continue to disrupt global trade corridors',meta:'ACLED · Reuters · May 2025 · Bab-el-Mandeb Strait',impact:'h'},
-  {cat:'eco',headline:'Shipping war-risk insurance premiums surge 300–500% for vessels transiting Hormuz and Red Sea zones',meta:'Lloyd\'s of London · BIMCO · April 2025',impact:'h'},
-  {cat:'dip',headline:'China-brokered Saudi-Iran normalization remains fragile amid ongoing proxy conflicts in Yemen and Iraq',meta:'ASEAN Analysis · ICG · March 2025',impact:'m'},
-  {cat:'nrg',headline:'Gulf LNG producers redirecting cargoes to Asian premium markets; Europe scrambling for alternative supplies',meta:'S&P Global · EIA · April 2025',impact:'m'},
-  {cat:'mil',headline:'Israel-Gaza ceasefire negotiations stalled; regional escalation risk elevated by Hezbollah cross-border exchanges',meta:'UN OCHA · Al-Monitor · May 2025',impact:'h'},
-  {cat:'eco',headline:'ASEAN supply chain diversification accelerates; Singapore port volumes up as Cape rerouting rises',meta:'MPA Singapore · Port of Rotterdam · April 2025',impact:'m'},
-  {cat:'hum',headline:'Food and fuel supply disruptions across Gaza, Yemen and Lebanon drive regional instability and migration pressures',meta:'WFP · UNHCR · May 2025',impact:'l'},
-  {cat:'dip',headline:'US carrier strike groups in Eastern Mediterranean reinforce Western deterrence posture',meta:'USNI News · Stratfor · May 2025',impact:'l'},
-  {cat:'nrg',headline:'OPEC+ holds production cuts steady; Saudi Arabia maintains voluntary 1mb/d cut through Q3 2025',meta:'IEA · OPEC Secretariat · May 2025',impact:'m'},
+  {cat:'mil',headline:'US Operation Epic Fury concluded 6 May 2026 — Washington pivoting to diplomacy to reopen Strait of Hormuz',meta:'NBC News · Reuters · 6 May 2026 · Strait of Hormuz',impact:'h'},
+  {cat:'dip',headline:'US and Iran nearing deal — Axios reports one-page MOU framework under review by Tehran via Pakistani mediators',meta:'Axios · NBC News · 6 May 2026',impact:'h'},
+  {cat:'eco',headline:'Brent crude plunged 11% to $101/bbl on 6 May 2026 on breakthrough hopes — had reached $116/bbl just one day prior',meta:'NBC News · OilPriceAPI · 6–7 May 2026',impact:'h'},
+  {cat:'hum',headline:'~23,000 seafarers from 87 countries remain stranded in Persian Gulf; supply disruptions weighing on global demand',meta:'US State Department · NBC News · 6 May 2026',impact:'h'},
+  {cat:'nrg',headline:'MAS tightened monetary policy April 2026 — raised SG CPI-All Items forecast to 1.5–2.5% citing Hormuz energy pass-through',meta:'MAS Monetary Policy Statement · 14 April 2026',impact:'h'},
+  {cat:'eco',headline:'PSA Singapore handled record 44.5m TEU in 2025 (+11% y/y) — Cape of Good Hope rerouting via Malacca Strait the key driver',meta:'Singapore Shipping Association · MPA Singapore · March 2026',impact:'m'},
+  {cat:'mil',headline:'Hormuz severely constrained since late Feb 2026; Red Sea at 30–35 vessels/day vs historical 70 — both corridors disrupted simultaneously',meta:'MAS MPS Apr 2026 · BIMCO · Maritime News · March 2026',impact:'h'},
+  {cat:'dip',headline:'Iran navy signals safe passage protocols "with new protocols in place" — stops short of confirming US-Iran deal',meta:'NBC News · Reuters · 6 May 2026',impact:'m'},
+  {cat:'eco',headline:'Singapore March 2026 CPI: transport inflation at 6% y/y driven by petrol prices; MAS core inflation 1.7%',meta:'DOS Singapore CPI Report · MAS · 23 April 2026',impact:'m'},
 ];
 
+// Scenario probabilities revised 7 May 2026 reflecting:
+// - Hormuz blockaded since late Feb 2026 (MAS Monetary Policy Statement Apr 2026)
+// - US Operation Epic Fury concluded 6 May 2026 (NBC News)
+// - US-Iran MOU framework reported by Axios 6 May 2026 (breakthrough probability raised)
+// - Brent closed at $101.27 on 6 May 2026 (NBC News / OilPriceAPI)
+// - MAS tightened monetary policy April 2026; CPI-All Items forecast raised to 1.5–2.5%
+// - PSA Singapore handled 44.5m TEU in 2025, +11% vs 2024 (Singapore Shipping Association)
 const SCENARIOS = [
   {
-    id:0,title:'Managed containment',prob:40,color:'fill-blue',desc:'Conflict remains localized; diplomacy limits escalation. Shipping disruptions persist at current levels but do not worsen materially.',
+    id:0,title:'Managed containment',prob:15,color:'fill-blue',desc:'Hostilities de-escalate to pre-Feb 2026 levels. Hormuz re-opens partially. Probability reduced from 40% — situation has materially escalated beyond containment.',
     matrix:[
-      ['Trade & logistics','Cape rerouting adds 7–12 days to EU routes. PSA transshipment volumes moderately elevated. Bunkering demand increases.'],
-      ['Energy & refining','Brent at $85–95 sustainable for refiners. Margins compressed by feedstock cost, offset by product premiums.'],
-      ['Financial markets','SGD stable. REITs and logistics equities see selective demand. CPI stays elevated at 2.5–3.5%.'],
-      ['Strategic posture','Low direct threat. SG diplomacy active as neutral facilitator. SAF readiness maintained at standard levels.'],
+      ['Trade & logistics','Partial Red Sea recovery. Some carriers return to Suez. Cape rerouting persists for tankers. PSA volumes stabilise at elevated levels.'],
+      ['Energy & refining','Brent eases to $85–95. Refinery margins recover as feedstock costs moderate. MAS inflation forecast revised down.'],
+      ['Financial markets','SGD moderates. Risk appetite recovers partially. Equities re-rate on reduced geopolitical premium.'],
+      ['Strategic posture','SG diplomacy credited for de-escalation role. SAF returns to standard readiness. Gulf expat community stabilises.'],
     ]
   },
   {
-    id:1,title:'Regional escalation',prob:30,color:'fill-amber',desc:'Hezbollah-Israel front opens fully; Iran-US tensions spike sharply. Oil risks climb to $110–130/bbl. Possible Gulf state involvement.',
+    id:1,title:'Active Hormuz blockade (current)',prob:35,color:'fill-amber',desc:'Current baseline as of May 2026. Hormuz severely constrained since Feb 2026. US Operation Epic Fury concluded. ~23,000 seafarers stranded. Oil at $101–120/bbl. Talks underway.',
     matrix:[
-      ['Trade & logistics','Full Red Sea closure. All EU-bound cargo reroutes Cape. PSA congestion risk rises; freight rates spike 40–60%.'],
-      ['Energy & refining','Brent at $110–130. MAS tightens to combat imported inflation spike. Refinery margins highly volatile.'],
-      ['Financial markets','SGD strengthens as safe-haven. SGX corrects 5–10%. Gulf SWF capital flight to Singapore accelerates.'],
-      ['Strategic posture','SAF on elevated readiness. SG mediates diplomatically. Singapore expat community in Gulf under evacuation review.'],
+      ['Trade & logistics','Hormuz severely constrained. Red Sea at 52% of normal. PSA benefiting (+11% TEU in 2025). Bunkering at record 54.9m tonnes (2024).'],
+      ['Energy & refining','Brent $101–120/bbl. MAS raised CPI-All Items forecast to 1.5–2.5% (Apr 2026). SG transport inflation at 6% y/y (Mar 2026).'],
+      ['Financial markets','SGD strengthened in upper NEER band. MAS tightened Apr 2026. SGX logistics and energy sectors outperforming.'],
+      ['Strategic posture','SAF on elevated readiness. SG acting as neutral channel. SPR activated. ASEAN energy coordination ongoing.'],
     ]
   },
   {
-    id:2,title:'Hormuz closure',prob:15,color:'fill-red',desc:'Iran mines or blockades Strait of Hormuz. Severe global energy shock. Oil above $150/bbl plausible. Global recession risk elevated.',
+    id:2,title:'Full escalation / deal collapse',prob:20,color:'fill-red',desc:'US-Iran talks collapse. Blockade intensifies. Oil spikes above $130/bbl. 23,000+ seafarers remain stranded indefinitely. Global recession risk elevated.',
     matrix:[
-      ['Trade & logistics','Extreme disruption: 30% of global oil trade halted. SG strategic reserves activated. Supply rationing possible.'],
-      ['Energy & refining','Oil >$150. Jurong Island refining disrupted by feedstock shortage. Energy security becomes top national priority.'],
-      ['Financial markets','Global recession risk. MAS intervenes to manage SGD appreciation. Equities in bear market territory.'],
-      ['Strategic posture','National emergency coordination. SG activates strategic petroleum reserve. ASEAN emergency mechanism triggered.'],
+      ['Trade & logistics','Full Hormuz closure. 20% of global oil trade halted. SG strategic reserves emergency drawdown. Fuel rationing possible.'],
+      ['Energy & refining','Oil >$130. Jurong Island refining critically disrupted. MAS emergency intervention. CPI-All Items could breach 4%.'],
+      ['Financial markets','Global recession. SGD as safe-haven surges. SGX in bear market. GIC/Temasek Gulf portfolios severely impacted.'],
+      ['Strategic posture','National emergency. ASEAN mechanism triggered. SAF full alert. SG citizens in Gulf evacuated. SPR fully deployed.'],
     ]
   },
   {
-    id:3,title:'Diplomatic breakthrough',prob:15,color:'fill-green',desc:'Ceasefire holds; normalization deals resume. Oil eases to $70–75/bbl. Shipping lanes reopen over 3–6 months.',
+    id:3,title:'Diplomatic breakthrough',prob:30,color:'fill-green',desc:'US-Iran MOU signed (Axios reports framework close as of 6 May 2026). Hormuz reopens. Oil falls toward $85–90/bbl. Probability doubled from 15% to 30%.',
     matrix:[
-      ['Trade & logistics','Red Sea reopens gradually. Freight rates normalize. Transshipment benefit fades but shipping costs ease significantly.'],
-      ['Energy & refining','Oil at $70–75. Refinery margins improve on cheaper feedstock. Consumer fuel prices ease; CPI relief 0.5–0.8pp.'],
-      ['Financial markets','Risk-on rally. SGX logistics, aviation, consumer sectors re-rate. Gulf investment momentum continues.'],
-      ['Strategic posture','SG diplomatic credibility enhanced as neutral facilitator. Trade missions to Gulf reactivated. Relations normalized.'],
+      ['Trade & logistics','Hormuz reopens over 2–4 weeks. Red Sea normalises over 3–6 months. PSA transshipment uplift fades but cost pressures ease significantly.'],
+      ['Energy & refining','Oil eases to $85–90/bbl. MAS reverses Apr 2026 tightening. CPI relief of 0.5–1.0pp. Refinery margins recover.'],
+      ['Financial markets','Strong risk-on rally. SGX logistics, aviation and consumer sectors re-rate. Gulf SWF investment into Singapore continues.'],
+      ['Strategic posture','SG diplomatic credibility significantly enhanced. MFA Gulf engagement reactivated. Trade missions resume immediately.'],
     ]
   },
 ];
 
 const THREATS = [
-  {title:'Energy cost inflation squeezing households and manufacturers',sector:'Energy',sectorClass:'sector-energy',sev:'High',sevColor:'var(--danger)',desc:'Elevated Brent prices flow directly into Singapore\'s fuel import costs. Manufacturing competitiveness erodes; CPI remains sticky above MAS comfort band. Petrochemical sector on Jurong Island particularly exposed to feedstock cost volatility.',prompt:'What is Singapore\'s exposure to Middle East energy price shocks and what policy tools does MAS have?'},
-  {title:'Shipping disruption raises logistics costs for export-oriented industries',sector:'Trade',sectorClass:'sector-trade',sev:'Medium',sevColor:'var(--warn)',desc:'Red Sea rerouting adds 10–14 days to Europe-bound cargo. Singapore exporters face higher freight rates; electronics and precision engineering exports particularly affected. Supply chain reliability declines.',prompt:'How is Red Sea shipping disruption affecting Singapore\'s export competitiveness in 2025?'},
-  {title:'Aviation and tourism demand from Middle East dampened',sector:'Aviation',sectorClass:'sector-aviation',sev:'Medium',sevColor:'var(--warn)',desc:'Reduced Middle East tourist inflows to Singapore. Changi airport route economics affected by war-risk surcharges on overflights. SIA and Scoot face elevated operating costs on Gulf routes.',prompt:'How is the Middle East conflict affecting Singapore Airlines and Changi Airport operations?'},
-  {title:'Financial market volatility and risk-off EM sentiment',sector:'Finance',sectorClass:'sector-finance',sev:'Low–Med',sevColor:'var(--safe)',desc:'Escalation spikes drive safe-haven flows from EM equities. SGX-listed real estate and infrastructure assets with ME exposure face valuation pressure. GIC and Temasek Gulf portfolio positions face repricing risk.',prompt:'How does Middle East escalation affect Singapore financial markets and sovereign wealth fund portfolios?'},
+  {title:'Energy cost inflation — MAS raised CPI forecast to 1.5–2.5% (Apr 2026)',sector:'Energy',sectorClass:'sector-energy',sev:'High',sevColor:'var(--danger)',desc:'Brent at $101.93/bbl as of 7 May 2026. MAS tightened monetary policy in April 2026, raising CPI-All Items forecast to 1.5–2.5%. Singapore transport inflation reached 6% y/y in March 2026, driven by petrol prices linked to Hormuz constraints. Jurong Island feedstock costs elevated.',prompt:'What is Singapore energy cost inflation impact from Hormuz blockade May 2026?'},
+  {title:'Hormuz blockade cutting global oil supply — 23,000 seafarers stranded',sector:'Trade',sectorClass:'sector-trade',sev:'High',sevColor:'var(--danger)',desc:'Hormuz severely constrained since late February 2026. Around 23,000 seafarers from 87 countries stranded in Persian Gulf (US State Dept, May 2026). Red Sea traffic at 52% of normal — 30–35 vs typical 70 vessels/day. Even if strait reopens, shipping flows take weeks to normalise.',prompt:'How is Hormuz blockade affecting Singapore shipping and trade in May 2026?'},
+  {title:'Aviation surcharges and Gulf route disruption hitting SIA margins',sector:'Aviation',sectorClass:'sector-aviation',sev:'Medium',sevColor:'var(--warn)',desc:'War-risk surcharges on Gulf overflights. Middle East tourist inflows to Singapore reduced. Changi route economics affected. SIA and Scoot Gulf operations under heightened cost pressure. Jet fuel (heating oil proxy) fell 6% on 6 May on breakthrough hopes but remains elevated.',prompt:'How is Hormuz crisis affecting Singapore Airlines and Changi Airport in 2026?'},
+  {title:'Financial market volatility — oil plunged 11% in single session (6 May)',sector:'Finance',sectorClass:'sector-finance',sev:'Medium',sevColor:'var(--warn)',desc:'Brent swung from $116/bbl (5 May) to $101/bbl (6 May) — an 11% intraday range — on US-Iran deal reports. SGX energy and logistics equities experiencing sharp volatility. GIC and Temasek Gulf portfolio valuations fluctuating. SGD strengthened in upper NEER band as safe-haven.',prompt:'How is oil price volatility from Hormuz crisis affecting Singapore financial markets 2026?'},
 ];
 
 const OPPORTUNITIES = [
-  {title:'Port transshipment volumes up as shipping reroutes via Malacca Strait',sector:'Trade',sectorClass:'sector-trade',sev:'High',sevColor:'var(--safe)',desc:'Cape of Good Hope rerouting increases traffic through Straits of Malacca. PSA Singapore and Jurong Port positioned to capture incremental transshipment. Bunkering demand rises as vessels make longer voyages.',prompt:'How is Singapore port benefiting from Red Sea shipping rerouting in 2025?'},
-  {title:'Middle East sovereign wealth capital seeking stable Asian allocations',sector:'Finance',sectorClass:'sector-finance',sev:'High',sevColor:'var(--safe)',desc:'Gulf SWFs (ADIA, PIF, QIA, KIA) accelerating Asian diversification amid regional uncertainty. Singapore as leading asset management hub benefits from increased fund flows into SGX, private equity, and real estate.',prompt:'How is Singapore attracting Gulf sovereign wealth fund investments during the Middle East crisis?'},
-  {title:'Energy trading and oil storage demand at Jurong Island',sector:'Energy',sectorClass:'sector-energy',sev:'Medium',sevColor:'var(--warn)',desc:'Price volatility increases Singapore\'s role as oil trading and storage hub. Vopak, Oiltanking and Jurong Rock Caverns see elevated demand. Singapore\'s position as Asia\'s largest oil trading centre is reinforced.',prompt:'How is Singapore\'s oil trading hub benefiting from Middle East energy market volatility?'},
-  {title:'Defence and security technology exports to Gulf allies',sector:'Defence',sectorClass:'sector-defence',sev:'Medium',sevColor:'var(--warn)',desc:'Gulf states increasing defence procurement. Singapore\'s defence industry (ST Engineering, DSO National Labs) positioned to deepen cooperation with UAE, Saudi Arabia, and Qatar. Non-aligned credibility aids arms exports.',prompt:'What defence and security export opportunities does the Middle East crisis create for Singapore?'},
+  {title:'PSA hits record 44.5m TEU in 2025 — Cape rerouting the key driver',sector:'Trade',sectorClass:'sector-trade',sev:'High',sevColor:'var(--safe)',desc:'PSA Singapore handled a record 44.5 million TEU in 2025, up ~11% from 40m in 2024, driven directly by Cape of Good Hope rerouting via Malacca Strait. Bunker sales also hit a record 54.92m tonnes in 2024, up 6% y/y. Singapore remains world\'s largest transshipment hub. (Singapore Shipping Association, Mar 2026)',prompt:'How much has Singapore PSA port benefited from Red Sea and Hormuz disruption in 2025-2026?'},
+  {title:'Gulf SWF capital accelerating into Singapore as regional safe-haven',sector:'Finance',sectorClass:'sector-finance',sev:'High',sevColor:'var(--safe)',desc:'Gulf SWFs (ADIA, PIF, QIA, KIA) accelerating Asian diversification amid war uncertainty. Singapore as leading asset management hub benefits from increased fund flows into SGX, private equity, and real estate. MAS tightened in April 2026 to manage capital inflows and inflation.',prompt:'How is Singapore benefiting from Gulf sovereign wealth fund capital flight in 2026?'},
+  {title:'Oil trading and storage demand at Jurong surging on price volatility',sector:'Energy',sectorClass:'sector-energy',sev:'High',sevColor:'var(--safe)',desc:'Extreme oil price volatility (Brent ranging $96–$126/bbl in May 2026 alone) is reinforcing Singapore\'s role as Asia\'s largest oil trading and storage hub. Vopak, Oiltanking and Jurong Rock Caverns seeing elevated storage demand. Strategic stockpiling accelerating across Asia.',prompt:'How is Singapore oil trading hub benefiting from Hormuz blockade price volatility 2026?'},
+  {title:'Defence and security cooperation deepening with Gulf partners',sector:'Defence',sectorClass:'sector-defence',sev:'Medium',sevColor:'var(--warn)',desc:'Gulf states accelerating defence procurement. ST Engineering and DSO National Labs positioned to deepen cooperation with UAE, Saudi Arabia and Qatar. Singapore\'s non-aligned credibility and active diplomatic role in US-Iran talks enhances its defence partnership appeal.',prompt:'What defence export opportunities is Singapore pursuing with Gulf states during Hormuz crisis?'},
 ];
 
+// Alert statuses updated 7 May 2026
 const ALERTS = [
-  {title:'Brent crude above $100/bbl threshold',desc:'Triggers MAS monetary policy review and energy security protocol. Current level $89/bbl approaching watch zone.',icon:'🛢',iconClass:'icon-warn',type:'warning',current:'$89',target:'Alert: >$100',status:'warning',statusLabel:'Warning'},
-  {title:'Red Sea traffic below 30% of normal',desc:'Current disruption at 45% of normal. If falls below 30%, PSA and bunkering emergency protocols activate.',icon:'⚓',iconClass:'icon-danger',type:'triggered',current:'45%',target:'Alert: <30%',status:'normal',statusLabel:'Monitoring'},
-  {title:'Hormuz closure probability above 25%',desc:'Current scenario probability 15%. If analysts revise above 25%, activate strategic petroleum reserve review.',icon:'⚡',iconClass:'icon-danger',type:'triggered',current:'15%',target:'Alert: >25%',status:'normal',statusLabel:'Monitoring'},
-  {title:'Singapore CPI above 4.5%',desc:'Imported energy inflation risk. Current CPI estimate 3.1%. MAS tightening threshold at 4.5%.',icon:'📊',iconClass:'icon-warn',type:'warning',current:'3.1%',target:'Alert: >4.5%',status:'normal',statusLabel:'Monitoring'},
-  {title:'Gulf SWF Singapore inflow above S$50bn',desc:'Positive trigger — indicates strong capital flight to Singapore as safe-haven. Activate enhanced asset management capacity.',icon:'◆',iconClass:'icon-safe',type:'safe',current:'~S$32bn',target:'Opportunity: >S$50bn',status:'normal',statusLabel:'Tracking'},
+  {title:'Brent crude above $100/bbl threshold',desc:'TRIGGERED. Brent closed at $101.27/bbl on 6 May 2026 (NBC News). MAS tightened monetary policy in April 2026 in response. CPI-All Items forecast raised to 1.5–2.5%.',icon:'🛢',iconClass:'icon-warn',type:'triggered',current:'$101.27',target:'Alert: >$100',status:'triggered',statusLabel:'Triggered'},
+  {title:'Hormuz severely constrained — blockade since Feb 2026',desc:'CRITICAL. Hormuz blockaded since late February 2026. Operation Epic Fury concluded 6 May. US-Iran MOU framework under discussion. 23,000 seafarers stranded (US State Dept).',icon:'⚡',iconClass:'icon-danger',type:'triggered',current:'Blockaded',target:'Alert: Closure',status:'triggered',statusLabel:'Critical'},
+  {title:'Red Sea traffic below 30% of normal',desc:'MONITORING. Current disruption: 30–35 vs 70 typical vessels/day (~52% reduction). Marginally above the 30% trigger. Any further deterioration activates PSA emergency protocols.',icon:'⚓',iconClass:'icon-warn',type:'warn',current:'−52%',target:'Alert: <30%',status:'warning',statusLabel:'Watch'},
+  {title:'Singapore CPI above 2.5%',desc:'MONITORING. MAS raised CPI-All Items forecast to 1.5–2.5% in April 2026. March CPI at 1.8% y/y; transport inflation at 6% y/y. Threshold revised upward from prior 4.5% alert level.',icon:'📊',iconClass:'icon-warn',type:'',current:'1.8%',target:'Alert: >2.5%',status:'warning',statusLabel:'Watch'},
+  {title:'Gulf SWF Singapore inflow above S$50bn',desc:'Positive trigger — strong capital flight to Singapore as safe-haven accelerating. Tracking elevated inflows from ADIA, PIF, QIA and KIA into SGX and private markets.',icon:'◆',iconClass:'icon-safe',type:'',current:'Elevated',target:'Opportunity: >S$50bn',status:'normal',statusLabel:'Tracking'},
 ];
 
 const SOURCES = [
@@ -1532,26 +1540,26 @@ function buildCharts(){
   // ══════════════════════════════════════════════════════════════
 
   const INTENSITY = {
-    months: ['Jan 2025','Feb 2025','Mar 2025','Apr 2025','May 2025'],
+    months: ['Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026'],
     conflict: {
-      values:[47,60,77,90,100],
-      raw:['318 events','412 events','524 events','617 events','682 events'],
+      values:[62,75,88,94,100],
+      raw:['423 events','512 events','601 events','641 events','682 events (peak)'],
       source:'ACLED political violence event count, Middle East region',
-      method:'(monthly_events ÷ 12-mo peak) × 100. Peak = 682 (May 2025).',
+      method:'(monthly_events ÷ 12-mo peak) × 100. Peak = 682 (May 2026). Escalation includes Hormuz blockade from Feb 2026.',
     },
     oil: {
-      values:[17,22,33,42,47],
-      raw:['$78/bbl','$80/bbl','$84/bbl','$87/bbl','$89/bbl'],
+      values:[30,55,75,82,78],
+      raw:['$81/bbl','$99/bbl','$116/bbl','$120/bbl','$101/bbl (deal hopes)'],
       source:'ICE Brent front-month avg (EIA.gov). Baseline = $72/bbl (24-mo avg Jan 2023–Dec 2024)',
       method:'min(((price−$72)÷$72)×200, 100)',
     },
     shipping: {
-      values:[8,22,38,50,55],
-      raw:['−8% vs baseline','−22% vs baseline','−38% vs baseline','−50% vs baseline','−55% vs baseline'],
-      source:'BIMCO Red Sea + Suez vessel transit data; MPA Singapore port statistics',
-      method:'(1 − current_transits ÷ 12-mo baseline) × 100',
+      values:[52,68,80,84,83],
+      raw:['−52% (Red Sea)','−65% (Hormuz added Feb)','−72% peak','−75% peak','−73% (slight easing)'],
+      source:'BIMCO vessel transit data: Red Sea + Hormuz combined (both corridors disrupted from Feb 2026). MPA Singapore port statistics.',
+      method:'(1 − current_transits ÷ 12-mo baseline) × 100. Feb 2026 onwards reflects dual disruption.',
     },
-    composite:[28,39,54,65,72],
+    composite:[48,65,81,87,87], // Weighted: Conflict 40% + Oil 35% + Shipping 25%
   };
 
   const iCtx = document.getElementById('intensityChart');
@@ -1559,7 +1567,7 @@ function buildCharts(){
     new Chart(iCtx,{
       type:'line',
       data:{
-        labels: INTENSITY.months,
+        labels: INTENSITY.months, // Updated May 2026 — reflects Hormuz blockade from Feb 2026
         datasets:[
           {label:'Conflict Events Index (ACLED)',
            data:INTENSITY.conflict.values,
